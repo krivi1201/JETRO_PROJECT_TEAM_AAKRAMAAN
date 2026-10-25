@@ -1,0 +1,687 @@
+=================================================================
+JETRO ANALYSIS PIPELINE
+=================================================================
+
+>>> STEP 1/7: feature_extraction.py
+=================================================================
+SURP DATA LOADING
+=================================================================
+Data directory: C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\data
+Recordings found: 84
+Loaded 01/box.pts: 14,297 rows
+  Non-data/blank lines skipped: 1
+Loaded 01/cylinder.pts: 13,872 rows
+  Non-data/blank lines skipped: 1
+Loaded 01/sphere.pts: 13,527 rows
+  Non-data/blank lines skipped: 1
+Loaded 01/wooden_corners.pts: 14,140 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/box.pts: 9,195 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/cylinder.pts: 5,702 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/sphere.pts: 10,378 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/wooden_corners.pts: 14,556 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/box.pts: 9,842 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/cylinder.pts: 11,458 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/sphere.pts: 10,853 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/wooden_corners.pts: 12,080 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/box.pts: 8,328 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/cylinder.pts: 6,151 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/sphere.pts: 7,249 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/wooden_corners.pts: 7,954 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/box.pts: 10,549 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/cylinder.pts: 5,264 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/sphere.pts: 9,886 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/wooden_corners.pts: 8,489 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/box.pts: 7,767 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/cylinder.pts: 12,104 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/sphere.pts: 9,300 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/wooden_corners.pts: 21,687 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/box.pts: 20,268 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/cylinder.pts: 24,901 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/sphere.pts: 23,261 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/wooden_corners.pts: 28,863 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/box.pts: 17,861 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/cylinder.pts: 14,482 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/sphere.pts: 19,494 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/wooden_corners.pts: 18,076 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/box.pts: 14,813 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/cylinder.pts: 9,502 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/sphere.pts: 13,362 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/wooden_corners.pts: 14,882 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/box.pts: 10,980 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/cylinder.pts: 9,890 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/sphere.pts: 11,867 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/wooden_corners.pts: 13,210 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/box.pts: 8,631 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/cylinder.pts: 9,721 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/sphere.pts: 9,014 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/wooden_corners.pts: 11,736 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/box.pts: 8,354 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/cylinder.pts: 10,565 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/sphere.pts: 10,582 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/wooden_corners.pts: 13,473 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/box.pts: 37,672 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/cylinder.pts: 24,651 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/sphere.pts: 50,128 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/wooden_corners.pts: 38,785 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/box.pts: 41,705 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/cylinder.pts: 17,325 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/sphere.pts: 24,441 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/wooden_corners.pts: 27,857 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/box.pts: 64,358 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/cylinder.pts: 90,456 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/sphere.pts: 67,405 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/wooden_corners.pts: 179,477 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/box.pts: 33,560 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/cylinder.pts: 46,722 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/sphere.pts: 32,719 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/wooden_corners.pts: 40,194 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/box.pts: 24,765 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/cylinder.pts: 17,220 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/sphere.pts: 23,787 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/wooden_corners.pts: 21,421 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/box.pts: 37,456 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/cylinder.pts: 21,844 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/sphere.pts: 17,696 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/wooden_corners.pts: 26,345 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/box.pts: 36,654 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/cylinder.pts: 33,841 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/sphere.pts: 32,711 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/wooden_corners.pts: 65,501 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/box.pts: 40,101 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/cylinder.pts: 38,496 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/sphere.pts: 31,286 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/wooden_corners.pts: 40,161 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/box.pts: 38,573 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/cylinder.pts: 33,610 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/sphere.pts: 52,911 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/wooden_corners.pts: 57,568 rows
+  Non-data/blank lines skipped: 1
+
+All four expected files exist in all 21 folders.
+
+PREPROCESSING SUMMARY
+Recordings processed: 84
+Continuous segments: 1413
+Windows created: 5642
+Recordings with zero windows: 0
+
+FEATURE EXTRACTION SUMMARY
+Recordings: 84
+Windows with features: 5,642
+Feature table shape: (5642, 237)
+Unique object types: 4
+Rows containing missing numeric features: 0
+
+Saved feature table: C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\window_features.csv
+<<< feature_extraction.py: OK (121.5 s)
+
+>>> STEP 2/7: overall_expertise.py
+============================================================
+PER-SHAPE INFERRED EXPERTISE
+============================================================
+C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\site-packages\joblib\externals\loky\backend\context.py:136: UserWarning: Could not find the number of physical cores for the following reason:
+[WinError 2] The system cannot find the file specified
+Returning the number of logical cores instead. You can silence this warning by setting LOKY_MAX_CPU_COUNT to the number of cores you want to use.
+  warnings.warn(
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\site-packages\joblib\externals\loky\backend\context.py", line 257, in _count_physical_cores
+    cpu_info = subprocess.run(
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\subprocess.py", line 501, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\subprocess.py", line 966, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\subprocess.py", line 1435, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+box: {'Experienced (inferred)': 17, 'Novice (inferred)': 4}
+cylinder: {'Experienced (inferred)': 14, 'Novice (inferred)': 7}
+sphere: {'Novice (inferred)': 13, 'Experienced (inferred)': 8}
+wooden_corners: {'Experienced (inferred)': 16, 'Novice (inferred)': 5}
+
+Overall:
+overall_inferred_status
+Not expert across all four shapes                15
+Experienced across all four shapes (inferred)     6
+
+Saved: C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\overall_expertise.csv
+
+IMPORTANT: labels are inferred from sensor variability, not verified against real skill labels.
+<<< overall_expertise.py: OK (19.9 s)
+
+>>> STEP 3/7: clustering.py (optional)
+Windows loaded: 5642
+Variability features selected: 13
+C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\site-packages\joblib\externals\loky\backend\context.py:136: UserWarning: Could not find the number of physical cores for the following reason:
+[WinError 2] The system cannot find the file specified
+Returning the number of logical cores instead. You can silence this warning by setting LOKY_MAX_CPU_COUNT to the number of cores you want to use.
+  warnings.warn(
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\site-packages\joblib\externals\loky\backend\context.py", line 257, in _count_physical_cores
+    cpu_info = subprocess.run(
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\subprocess.py", line 501, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\subprocess.py", line 966, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\KRIVI ARORA\AppData\Local\Programs\Python\Python310\lib\subprocess.py", line 1435, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+
+============================================================
+INFERRED NOVICE / EXPERIENCED CLUSTERING
+============================================================
+
+Participants: 21
+Features used: 13
+PCA variance explained by first two components: 79.17%
+
+Cluster summary:
+ cluster           cluster_name  participants  mean_variability_score  median_variability_score
+       0 Experienced (inferred)            19               -0.201781                 -0.255237
+       1      Novice (inferred)             2                1.916919                  1.916919
+
+Participant assignments:
+participant_folder  cluster           cluster_name  variability_score
+                01        0 Experienced (inferred)          -0.797237
+                02        0 Experienced (inferred)          -0.326995
+                03        0 Experienced (inferred)           0.333083
+                05        0 Experienced (inferred)           0.557155
+                06        0 Experienced (inferred)          -0.255237
+                07        0 Experienced (inferred)          -0.511013
+                08        0 Experienced (inferred)           0.582317
+                09        0 Experienced (inferred)           0.200933
+                10        0 Experienced (inferred)          -0.021282
+                11        0 Experienced (inferred)          -0.168093
+                12        0 Experienced (inferred)          -0.794341
+                13        0 Experienced (inferred)          -0.698206
+                14        0 Experienced (inferred)          -0.074988
+                15        0 Experienced (inferred)          -0.825990
+                16        0 Experienced (inferred)          -0.528300
+                18        0 Experienced (inferred)           0.284239
+                19        0 Experienced (inferred)           0.043037
+                20        0 Experienced (inferred)          -0.523563
+                21        0 Experienced (inferred)          -0.309356
+                04        1      Novice (inferred)           1.657476
+                17        1      Novice (inferred)           2.176362
+
+Files saved:
+C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\participant_clusters.csv
+C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\window_clusters.csv
+C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\cluster_summary.csv
+
+IMPORTANT: These experience labels are inferred from sensor variability, not verified against actual skill labels.
+<<< clustering.py: OK (3.7 s)
+
+>>> STEP 4/7: xgboost_classification.py (optional)
+=================================================================
+XGBOOST: PARTICIPANT-LEVEL CLASSIFICATION
+=================================================================
+Participants: 21
+Numeric features: 182
+Inferred non-expert group (0): 15
+Inferred all-shapes expert group (1): 6
+
+Cross-validated results:
+Accuracy:          0.714
+Balanced accuracy: 0.500
+F1-score:          0.000
+
+Confusion matrix (rows=true, columns=predicted):
+Labels: 0 = not expert across all shapes; 1 = inferred expert
+[[15  0]
+ [ 6  0]]
+
+Classification report:
+                                          precision    recall  f1-score   support
+
+ Not expert across all shapes (inferred)       0.71      1.00      0.83        15
+Experienced across all shapes (inferred)       0.00      0.00      0.00         6
+
+                                accuracy                           0.71        21
+                               macro avg       0.36      0.50      0.42        21
+                            weighted avg       0.51      0.71      0.60        21
+
+
+Top 15 features from the full-data fit:
+                    feature  importance
+                     FX_std    0.185819
+                     FX_iqr    0.184202
+                TY_kurtosis    0.179138
+                   FX_range    0.174840
+                     FX_max    0.151968
+                  TX_median    0.124034
+                  FY_median    0.000000
+                     FY_iqr    0.000000
+           FY_mean_absolute    0.000000
+                     FY_rms    0.000000
+                FY_skewness    0.000000
+                FY_kurtosis    0.000000
+FY_mean_absolute_difference    0.000000
+      FY_zero_crossing_rate    0.000000
+                     X_mean    0.000000
+
+Saved files:
+C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\xgboost_predictions.csv
+C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\xgboost_metrics.csv
+C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\xgboost_feature_importance.csv
+
+IMPORTANT: The target labels are inferred from clustering. These metrics measure reproduction of those labels, not validated real-world expertise.
+<<< xgboost_classification.py: OK (4.3 s)
+
+>>> STEP 5/7: compare_classifiers.py (optional)
+=================================================================
+CLASSIFIER COMPARISON
+=================================================================
+Participants: 21
+Features: 182
+Class 0 (not expert across all shapes): 15
+Class 1 (inferred expert across all shapes): 6
+
+Majority baseline
+  Balanced accuracy: 0.500 +/- 0.000
+  Macro F1: 0.418 +/- 0.021
+  Accuracy: 0.720 +/- 0.060
+
+Balanced logistic regression
+  Balanced accuracy: 0.840 +/- 0.196
+  Macro F1: 0.794 +/- 0.235
+  Accuracy: 0.836 +/- 0.188
+
+Balanced random forest
+  Balanced accuracy: 0.852 +/- 0.200
+  Macro F1: 0.820 +/- 0.232
+  Accuracy: 0.892 +/- 0.125
+
+Balanced XGBoost
+  Balanced accuracy: 0.500 +/- 0.000
+  Macro F1: 0.418 +/- 0.021
+  Accuracy: 0.720 +/- 0.060
+
+=================================================================
+FINAL COMPARISON
+=================================================================
+                       model  accuracy_mean  accuracy_std  balanced_accuracy_mean  balanced_accuracy_std  macro_f1_mean  macro_f1_std
+      Balanced random forest          0.892      0.124643                0.851667               0.199506       0.820452      0.231837
+Balanced logistic regression          0.836      0.187627                0.840000               0.196384       0.793714      0.234648
+           Majority baseline          0.720      0.060000                0.500000               0.000000       0.417857      0.021429
+            Balanced XGBoost          0.720      0.060000                0.500000               0.000000       0.417857      0.021429
+
+Saved results to:
+C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\classifier_comparison.csv
+
+CAUTION: Repeated cross-validation folds overlap, so the reported standard deviations are descriptive, not formal confidence intervals. Results measure prediction of inferred cluster-derived labels, not verified expertise.
+<<< compare_classifiers.py: OK (21.7 s)
+
+>>> STEP 6/7: explain.py
+============================================================
+SHAP EXPLANATION - BALANCED RANDOM FOREST
+============================================================
+
+Label column used: overall_inferred_status
+Participants matched: 21
+Features selected: 182
+
+Participants: 21
+Features: 182
+Not expert across all shapes: 15
+Experienced across all shapes (inferred): 6
+
+Running leave-one-participant-out SHAP...
+Participants: 21
+Features: 182
+[01/21] Participant 1 completed
+[02/21] Participant 2 completed
+[03/21] Participant 3 completed
+[04/21] Participant 4 completed
+[05/21] Participant 5 completed
+[06/21] Participant 6 completed
+[07/21] Participant 7 completed
+[08/21] Participant 8 completed
+[09/21] Participant 9 completed
+[10/21] Participant 10 completed
+[11/21] Participant 11 completed
+[12/21] Participant 12 completed
+[13/21] Participant 13 completed
+[14/21] Participant 14 completed
+[15/21] Participant 15 completed
+[16/21] Participant 16 completed
+[17/21] Participant 17 completed
+[18/21] Participant 18 completed
+[19/21] Participant 19 completed
+[20/21] Participant 20 completed
+[21/21] Participant 21 completed
+
+Saved:
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\explain_shap_feature_importance.csv
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\explain_shap_oof_values.csv
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\explain_shap_predictions.csv
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\explain_shap_summary.png
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\explain_shap_bar.png
+
+Top 15 features by mean absolute SHAP:
+    feature  mean_absolute_shap  mean_shap
+     FX_std            0.025218  -0.012736
+     FY_max            0.023594  -0.009655
+     FX_min            0.022338  -0.010017
+FY_variance            0.021525  -0.009923
+     FY_rms            0.021300  -0.009053
+TZ_variance            0.019163  -0.009789
+     TZ_rms            0.015648  -0.008163
+FX_variance            0.015623  -0.008849
+TY_kurtosis            0.013669  -0.003646
+     TZ_max            0.013242  -0.005975
+     FX_rms            0.013083  -0.005835
+   FX_range            0.012983  -0.004834
+     TZ_iqr            0.012432  -0.005942
+     FZ_max            0.011028  -0.003253
+     FY_std            0.010722  -0.005121
+
+LOOCV accuracy: 0.905
+
+explain.py completed successfully.
+<<< explain.py: OK (32.0 s)
+
+>>> STEP 7/7: timing_analysis.py
+=================================================================
+TIMING ANALYSIS — WHEN DID DEVIATIONS HAPPEN?
+=================================================================
+=================================================================
+SURP DATA LOADING
+=================================================================
+Data directory: C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\data
+Recordings found: 84
+Loaded 01/box.pts: 14,297 rows
+  Non-data/blank lines skipped: 1
+Loaded 01/cylinder.pts: 13,872 rows
+  Non-data/blank lines skipped: 1
+Loaded 01/sphere.pts: 13,527 rows
+  Non-data/blank lines skipped: 1
+Loaded 01/wooden_corners.pts: 14,140 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/box.pts: 9,195 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/cylinder.pts: 5,702 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/sphere.pts: 10,378 rows
+  Non-data/blank lines skipped: 1
+Loaded 02/wooden_corners.pts: 14,556 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/box.pts: 9,842 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/cylinder.pts: 11,458 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/sphere.pts: 10,853 rows
+  Non-data/blank lines skipped: 1
+Loaded 03/wooden_corners.pts: 12,080 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/box.pts: 8,328 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/cylinder.pts: 6,151 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/sphere.pts: 7,249 rows
+  Non-data/blank lines skipped: 1
+Loaded 04/wooden_corners.pts: 7,954 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/box.pts: 10,549 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/cylinder.pts: 5,264 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/sphere.pts: 9,886 rows
+  Non-data/blank lines skipped: 1
+Loaded 05/wooden_corners.pts: 8,489 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/box.pts: 7,767 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/cylinder.pts: 12,104 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/sphere.pts: 9,300 rows
+  Non-data/blank lines skipped: 1
+Loaded 06/wooden_corners.pts: 21,687 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/box.pts: 20,268 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/cylinder.pts: 24,901 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/sphere.pts: 23,261 rows
+  Non-data/blank lines skipped: 1
+Loaded 07/wooden_corners.pts: 28,863 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/box.pts: 17,861 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/cylinder.pts: 14,482 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/sphere.pts: 19,494 rows
+  Non-data/blank lines skipped: 1
+Loaded 08/wooden_corners.pts: 18,076 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/box.pts: 14,813 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/cylinder.pts: 9,502 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/sphere.pts: 13,362 rows
+  Non-data/blank lines skipped: 1
+Loaded 09/wooden_corners.pts: 14,882 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/box.pts: 10,980 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/cylinder.pts: 9,890 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/sphere.pts: 11,867 rows
+  Non-data/blank lines skipped: 1
+Loaded 10/wooden_corners.pts: 13,210 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/box.pts: 8,631 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/cylinder.pts: 9,721 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/sphere.pts: 9,014 rows
+  Non-data/blank lines skipped: 1
+Loaded 11/wooden_corners.pts: 11,736 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/box.pts: 8,354 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/cylinder.pts: 10,565 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/sphere.pts: 10,582 rows
+  Non-data/blank lines skipped: 1
+Loaded 12/wooden_corners.pts: 13,473 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/box.pts: 37,672 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/cylinder.pts: 24,651 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/sphere.pts: 50,128 rows
+  Non-data/blank lines skipped: 1
+Loaded 13/wooden_corners.pts: 38,785 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/box.pts: 41,705 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/cylinder.pts: 17,325 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/sphere.pts: 24,441 rows
+  Non-data/blank lines skipped: 1
+Loaded 14/wooden_corners.pts: 27,857 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/box.pts: 64,358 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/cylinder.pts: 90,456 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/sphere.pts: 67,405 rows
+  Non-data/blank lines skipped: 1
+Loaded 15/wooden_corners.pts: 179,477 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/box.pts: 33,560 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/cylinder.pts: 46,722 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/sphere.pts: 32,719 rows
+  Non-data/blank lines skipped: 1
+Loaded 16/wooden_corners.pts: 40,194 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/box.pts: 24,765 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/cylinder.pts: 17,220 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/sphere.pts: 23,787 rows
+  Non-data/blank lines skipped: 1
+Loaded 17/wooden_corners.pts: 21,421 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/box.pts: 37,456 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/cylinder.pts: 21,844 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/sphere.pts: 17,696 rows
+  Non-data/blank lines skipped: 1
+Loaded 18/wooden_corners.pts: 26,345 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/box.pts: 36,654 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/cylinder.pts: 33,841 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/sphere.pts: 32,711 rows
+  Non-data/blank lines skipped: 1
+Loaded 19/wooden_corners.pts: 65,501 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/box.pts: 40,101 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/cylinder.pts: 38,496 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/sphere.pts: 31,286 rows
+  Non-data/blank lines skipped: 1
+Loaded 20/wooden_corners.pts: 40,161 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/box.pts: 38,573 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/cylinder.pts: 33,610 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/sphere.pts: 52,911 rows
+  Non-data/blank lines skipped: 1
+Loaded 21/wooden_corners.pts: 57,568 rows
+  Non-data/blank lines skipped: 1
+
+All four expected files exist in all 21 folders.
+
+Windows analysed: 5,642
+Timed moments found: 394
+
+Moments per participant:
+participant_folder
+01    20
+02    20
+03    18
+04    20
+05    20
+06    20
+07    20
+08    20
+09    20
+10    20
+11    20
+12    14
+13    17
+14    20
+15    15
+16    20
+17    20
+18    18
+19    20
+20    12
+21    20
+
+Saved:
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\timing_window_metrics.csv
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\timing_reference.csv
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\timing_moments.csv
+  C:\Users\KRIVI ARORA\Desktop\JETRO_CL\JETRO\outputs\timing_summary.json
+
+IMPORTANT: moments are periods where sensor patterns differed strongly from inferred-experienced participants on the same task. They indicate when to look, not confirmed mistakes.
+<<< timing_analysis.py: OK (32.4 s)
+
+=================================================================
+PIPELINE SUMMARY
+=================================================================
+  feature_extraction.py        OK                            121.5 s
+  overall_expertise.py         OK                             19.9 s
+  clustering.py                OK                              3.7 s
+  xgboost_classification.py    OK                              4.3 s
+  compare_classifiers.py       OK                             21.7 s
+  explain.py                   OK                             32.0 s
+  timing_analysis.py           OK                             32.4 s
+
+Finished in 235.4 s.
+PIPELINE COMPLETE

@@ -1,0 +1,43 @@
+participant_folder,predicted_label,predicted_probability_expert,model,feedback
+1,1,0.5743660714285713,gemma3:4b,"1. WHERE TO FOCUS
+*   **Excessive Turning:** You’re turning the wood too much between strokes. This is evident in the Box task (0:57.9-1:00.6) and Cylinder task (1:40.5-1:45.1). Try holding the piece steady during a stroke and turning it deliberately between strokes.
+*   **High Pressure:** You’re applying too much pressure, particularly when shaping spheres. This is seen in the Sphere task (0:47.3-1:00.5) and Sphere task (0:29.3-0:31.9). Ease off and let the abrasive do the work; aim for steady, moderate pressure.
+*   **Uneven Pressure:** Your pressure fluctuates significantly. This is noticeable in the Box task (0:43.3-0:46.0) and Sphere task (0:29.3-0:31.9). Keep the pressure constant through each stroke; slow down if you feel it changing.
+
+2. SMALL CHANGES TO TRY
+*   Focus on applying steady, moderate pressure, especially when shaping curves.
+*   Maintain a consistent sanding stroke and direction.
+*   Avoid sudden changes in grip or twisting the wood while shaping.
+
+3. HOW TO CHECK PROGRESS
+*   **Smoothness:** Rate the smoothness of the surface on a scale of 1 to 5, with 5 being perfectly smooth.
+*   **Scratches:** Count the number of deep scratches or uneven patches after each shaping trial.
+
+4. WHEN IT HAPPENED
+*   Box task, 0:57.9-1:00.6 (sharpest at 0:59.7): the piece or tool was turned much more than by experienced participants — about 7.6× the typical experienced value. Try instead: Hold the piece steady during a stroke and turn it deliberately between strokes.
+*   Sphere task, 0:47.3-1:00.5 (sharpest at 0:53.4): pressed much harder than experienced participants on this task — about 9.1× the typical experienced value. Try instead: Ease off and let the abrasive do the work; aim for steady, moderate pressure.
+*   Sphere task, 0:29.3-0:31.9 (sharpest at 0:31.5): pressure rose and fell much more than for experienced participants (uneven pressure) — about 6.5× the typical experienced value. Try instead: Keep the pressure constant through each stroke; slow down if you feel it changing.
+*   Cylinder task, 1:40.5-1:45.1 (sharpest at 1:42.6): the piece or tool was turned much more than by experienced participants — about 6.1× the typical experienced value. Try instead: Hold the piece steady during a stroke and turn it deliberately between strokes."
+11,1,0.765572365134865,gemma3:4b,"1. WHERE TO FOCUS
+
+*   **Uneven Twisting:** You’re applying a lot of twisting force, especially when shaping. This is causing inconsistent results. (M1, M3)
+*   **Rushing:** You’re moving too quickly, leading to a lack of control. (M2, M4)
+*   **Changing Grip:** You’re frequently changing your grip during strokes, disrupting your control. (M1, M3)
+
+2. SMALL CHANGES TO TRY
+
+*   Slow down your strokes significantly. Focus on full, deliberate movements.
+*   Try to maintain a consistent grip and wrist angle throughout each stroke.
+*   Resist the urge to adjust your grip mid-stroke; re-grip the piece completely between strokes.
+
+3. HOW TO CHECK PROGRESS
+
+*   **Smoothness:** Rate the smoothness of your shaping from 1 to 5, with 5 being perfectly smooth.
+*   **Consistent Results:** Repeat the same shaping task multiple times and see if you get similar outcomes.
+
+4. WHEN IT HAPPENED
+
+*   Sphere task, 0:44.9-0:49.0 (sharpest at 0:47.1): The sensors show a very uneven twisting force, around 9.3 times the typical experienced value. Try instead: Keep your grip and wrist angle fixed during a stroke.
+*   Box task, 0:53.6-0:57.6 (sharpest at 0:55.6): The sensors show you moving much faster than experienced participants – about 6.1 times the typical experienced value. Try instead: Slow down and use full, controlled strokes.
+*   Wooden corners task, 0:43.4-0:47.5 (sharpest at 0:45.0): The piece or tool was turned much more than by experienced participants – about 6.2 times the typical experienced value. Try instead: Hold the piece steady during a stroke and turn it deliberately between strokes.
+*   Box task, 0:02.4-0:06.3 (sharpest at 0:03.7): The sensors show you moving much faster than experienced participants – about 4.2 times the typical experienced value. Try instead: Slow down and use full, controlled strokes."

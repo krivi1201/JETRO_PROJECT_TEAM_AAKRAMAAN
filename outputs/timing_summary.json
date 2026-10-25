@@ -1,0 +1,80 @@
+{
+  "z_threshold": 3.5,
+  "min_relative_difference": 0.25,
+  "min_reference_participants": 3,
+  "rate_lag_seconds": 0.05,
+  "max_moments_per_recording": 5,
+  "labels_file_used": true,
+  "recordings_analysed": 84,
+  "windows": 5642,
+  "moments": 394,
+  "metrics": {
+    "force_level": {
+      "label": "Pressure level",
+      "signal": "force",
+      "stat": "mean",
+      "direction": "both",
+      "unit": "force-sensor units",
+      "high": "pressed much harder than experienced participants on this task",
+      "low": "had much lighter contact than experienced participants (possible loss of contact)",
+      "tip_high": "Ease off and let the abrasive do the work; aim for steady, moderate pressure.",
+      "tip_low": "Keep the tool in steady contact with the wood for the whole stroke."
+    },
+    "force_variability": {
+      "label": "Pressure steadiness",
+      "signal": "force",
+      "stat": "std",
+      "direction": "high",
+      "unit": "force-sensor units",
+      "high": "pressure rose and fell much more than for experienced participants (uneven pressure)",
+      "tip_high": "Keep the pressure constant through each stroke; slow down if you feel it changing."
+    },
+    "force_abruptness": {
+      "label": "Sudden pressure changes",
+      "signal": "force_rate",
+      "stat": "p95abs",
+      "direction": "high",
+      "unit": "force-sensor units per second",
+      "high": "pressure changed suddenly (a jab, slip or abrupt lift-off)",
+      "tip_high": "Start and finish each stroke gently instead of pushing in or lifting off abruptly."
+    },
+    "torque_variability": {
+      "label": "Twisting steadiness",
+      "signal": "torque",
+      "stat": "std",
+      "direction": "high",
+      "unit": "torque-sensor units",
+      "high": "twisting force was much more uneven than for experienced participants",
+      "tip_high": "Keep your grip and wrist angle fixed during a stroke; re-grip between strokes, not during them."
+    },
+    "movement_speed": {
+      "label": "Movement speed",
+      "signal": "speed",
+      "stat": "median",
+      "direction": "both",
+      "unit": "position units per second",
+      "high": "moved much faster than experienced participants (rushing)",
+      "low": "moved much more slowly or paused (hesitation)",
+      "tip_high": "Slow down and use full, controlled strokes.",
+      "tip_low": "Keep a steady rhythm; plan the next stroke before you start it."
+    },
+    "movement_jerk": {
+      "label": "Smoothness of motion",
+      "signal": "accel",
+      "stat": "p95abs",
+      "direction": "high",
+      "unit": "position units per second\u00b2",
+      "high": "movement was jerky, with sudden starts and stops",
+      "tip_high": "Move in smooth, continuous strokes; avoid sudden starts and stops."
+    },
+    "rotation_rate": {
+      "label": "Turning the piece",
+      "signal": "angular_speed",
+      "stat": "median",
+      "direction": "high",
+      "unit": "radians per second",
+      "high": "the piece or tool was turned much more than by experienced participants",
+      "tip_high": "Hold the piece steady during a stroke and turn it deliberately between strokes."
+    }
+  }
+}

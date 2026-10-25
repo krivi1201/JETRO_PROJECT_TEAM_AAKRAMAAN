@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SURPTech coaching</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/vendor/plotly.min.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><b>SURPTech</b><span>JETRO sanding and shaping coach</span></div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button class="tab" role="tab" data-view="coach" aria-selected="true">Coaching</button>
+      <button class="tab" role="tab" data-view="session" aria-selected="false">Session timeline</button>
+      <button class="tab" role="tab" data-view="cohort" aria-selected="false">Cohort</button>
+      <button class="tab" role="tab" data-view="method" aria-selected="false">Method and data</button>
+    </nav>
+    <div class="spacer"></div>
+    <span id="pipeline-status" class="status-dot off">Checking analysis…</span>
+  </header>
+  <div class="layout">
+    <aside class="rail" aria-label="Participants">
+      <h2>Participants</h2>
+      <div class="filter" role="group" aria-label="Filter participants">
+        <button data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="novice" aria-pressed="false">Novice</button>
+        <button data-filter="expert" aria-pressed="false">Experienced</button>
+      </div>
+      <ul class="plist" id="plist"></ul>
+      <select class="pselect" id="pselect" aria-label="Participant"></select>
+    </aside>
+    <main id="main"><div class="loading">Loading…</div></main>
+  </div>
+</body>
+</html>
