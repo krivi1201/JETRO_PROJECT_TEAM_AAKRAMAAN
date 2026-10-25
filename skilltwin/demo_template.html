@@ -1,0 +1,1718 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skill Twin</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: top bar with pill tabs (Session · Accuracy · Verification), a hero with the headline numbers,
+   then one dashboard grid per tab. Warm cream + charcoal + yellow, after the team's reference board. */
+:root {
+  --page: linear-gradient(135deg, #ecebe7 0%, #f2efe6 48%, #f8ebc2 100%);
+  --page-solid: #f2efe6;
+  --surface: rgba(255, 255, 255, .64);
+  --surface-solid: #fbfaf6;
+  --edge: rgba(255, 255, 255, .85);
+  --ink: #1d1d1b;
+  --ink-2: #57564f;
+  --muted: #8f8d84;
+  --rule: #e4e0d4;
+  --wash: rgba(29, 29, 27, .05);
+  --accent: #f7cd45;
+  --accent-ink: #1d1d1b;
+  --dark: #2b2b29;
+  --expert: #2b2b29;
+  --expert-band: rgba(43, 43, 41, .11);
+  --trainee: #b97e00;
+  --trainee-wash: rgba(247, 205, 69, .22);
+  --good: #3b8a35;
+  --bad: #d0453a;
+  --shadow: 0 1px 2px rgba(60, 50, 20, .04), 0 12px 32px -12px rgba(60, 50, 20, .14);
+  --font-body: "Outfit", "Zen Kaku Gothic New", "Noto Sans Devanagari", "Segoe UI", system-ui, sans-serif;
+  --font-jp: "Zen Kaku Gothic New", "Yu Gothic", "Hiragino Sans", system-ui, sans-serif;
+  --r-lg: 28px;
+  --r-md: 20px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: linear-gradient(135deg, #121211 0%, #161510 50%, #221d0d 100%);
+    --page-solid: #151410;
+    --surface: rgba(255, 255, 255, .045);
+    --surface-solid: #1d1c19;
+    --edge: rgba(255, 255, 255, .07);
+    --ink: #f2f0ea; --ink-2: #bdbab0; --muted: #85837a; --rule: #34332e; --wash: rgba(255, 255, 255, .06);
+    --dark: #0d0d0c;
+    --expert: #e8e5dc; --expert-band: rgba(232, 229, 220, .14);
+    --trainee: #f7cd45; --trainee-wash: rgba(247, 205, 69, .14);
+    --good: #6cc463; --bad: #ff6f62;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -14px rgba(0, 0, 0, .6);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: linear-gradient(135deg, #121211 0%, #161510 50%, #221d0d 100%);
+  --page-solid: #151410;
+  --surface: rgba(255, 255, 255, .045);
+  --surface-solid: #1d1c19;
+  --edge: rgba(255, 255, 255, .07);
+  --ink: #f2f0ea; --ink-2: #bdbab0; --muted: #85837a; --rule: #34332e; --wash: rgba(255, 255, 255, .06);
+  --dark: #0d0d0c;
+  --expert: #e8e5dc; --expert-band: rgba(232, 229, 220, .14);
+  --trainee: #f7cd45; --trainee-wash: rgba(247, 205, 69, .14);
+  --good: #6cc463; --bad: #ff6f62;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -14px rgba(0, 0, 0, .6);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--page-solid); }
+body {
+  margin: 0; min-height: 100vh; background: var(--page); background-attachment: fixed;
+  color: var(--ink); font: 400 16px/1.55 var(--font-body);
+  padding: 0 max(16px, env(safe-area-inset-right, 0px)) 56px max(16px, env(safe-area-inset-left, 0px));
+}
+.shell { max-width: 1320px; margin: 0 auto; display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); }
+main, .step, .grid { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; letter-spacing: -.01em; }
+h2 { font-size: 1.55rem; }
+h3 { font-size: 1.12rem; font-weight: 500; }
+p { margin: 0; max-width: 70ch; }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.label { font-size: .82rem; color: var(--muted); }
+.quiet { color: var(--muted); font-size: .9rem; }
+[hidden] { display: none !important; }
+
+/* ---------- top bar ---------- */
+.top { display: flex; align-items: center; gap: 14px; padding-top: 22px; flex-wrap: wrap; }
+.logo { display: inline-flex; align-items: baseline; gap: 10px; border: 1.5px solid var(--ink); border-radius: 999px; padding: 8px 22px 9px; font-size: 1.5rem; line-height: 1.1; letter-spacing: -.01em; white-space: nowrap; }
+.logo small { font: 500 .78rem var(--font-jp); color: var(--muted); letter-spacing: .04em; }
+.tabs { margin-left: auto; display: flex; gap: 2px; padding: 5px; border-radius: 999px; background: var(--surface); border: 1px solid var(--edge); box-shadow: var(--shadow); backdrop-filter: blur(14px); overflow-x: auto; scrollbar-width: none; }
+.tabs button { border: 0; background: none; padding: 10px 20px; border-radius: 999px; cursor: pointer; white-space: nowrap; color: var(--ink); }
+.tabs button:hover { background: var(--wash); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--page-solid); }
+.tools { display: flex; gap: 8px; }
+.round { height: 48px; min-width: 48px; border-radius: 999px; border: 1px solid var(--edge); background: var(--surface); box-shadow: var(--shadow); backdrop-filter: blur(14px); cursor: pointer; display: inline-grid; place-items: center; padding: 0 14px; }
+.round:hover { background: var(--surface-solid); }
+.round svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+#lang-toggle { font-weight: 500; min-width: 76px; }
+#lang-toggle .jp { font-family: var(--font-jp); }
+@media (max-width: 860px) { .tabs { order: 3; margin-left: 0; width: 100%; } .tools { margin-left: auto; } }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px 48px; align-items: end; padding: 18px 0 4px; }
+.kicker { font-size: .95rem; color: var(--ink-2); }
+.hero h1 { font-size: clamp(2.6rem, 1.8rem + 3vw, 4.2rem); line-height: 1.02; margin: 6px 0 14px; letter-spacing: -.03em; }
+.thesis { font-size: 1.08rem; color: var(--ink-2); max-width: 58ch; }
+.thesis strong { color: var(--ink); font-weight: 500; background: linear-gradient(transparent 58%, var(--trainee-wash) 58%); }
+.bigstats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.bigstat { display: grid; gap: 4px; align-content: start; }
+.bs-top { display: flex; align-items: flex-start; gap: 8px; }
+.bs-ico { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); border: 1px solid var(--edge); display: grid; place-items: center; margin-top: 14px; flex: none; }
+.bs-ico svg { width: 15px; height: 15px; stroke: var(--ink-2); fill: none; stroke-width: 1.8; }
+.bs-num { font-size: clamp(2.6rem, 1.6rem + 2.8vw, 4.1rem); font-weight: 300; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.bs-num small { font-size: .95rem; letter-spacing: 0; color: var(--muted); margin-left: 4px; font-weight: 400; }
+.bs-lab { font-weight: 500; font-size: .95rem; padding-left: 38px; }
+.bigstat p { font-size: .82rem; color: var(--muted); padding-left: 38px; line-height: 1.4; }
+@media (max-width: 1180px) { .hero { grid-template-columns: 1fr; align-items: start; } .bigstats { max-width: 760px; } }
+@media (max-width: 560px) { .bigstats { grid-template-columns: 1fr; } .bs-lab, .bigstat p { padding-left: 38px; } }
+
+/* ---------- surfaces ---------- */
+.panel { background: var(--surface); border: 1px solid var(--edge); border-radius: var(--r-lg); padding: 24px; box-shadow: var(--shadow); backdrop-filter: blur(14px); position: relative; min-width: 0; display: grid; gap: 14px; align-content: start; }
+.panel-dark { --ink: #f4f2ec; --ink-2: #c9c6bc; --muted: #8e8b82; --rule: #43423d; --wash: rgba(255, 255, 255, .07); --surface: #3a3a37;
+  background: var(--dark); color: var(--ink); border-color: transparent; }
+:root[data-theme="dark"] .panel-dark { border-color: rgba(255, 255, 255, .06); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .panel-dark { border-color: rgba(255, 255, 255, .06); } }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.panel-head .count { font-size: 2rem; font-weight: 300; letter-spacing: -.03em; line-height: 1; }
+.grid { display: grid; gap: 18px; }
+.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { fill: var(--muted); font: 12px var(--font-body); font-variant-numeric: tabular-nums; }
+.chart .title { fill: var(--ink); font: 500 13.5px var(--font-body); }
+.legend { display: flex; gap: 8px 18px; flex-wrap: wrap; font-size: .85rem; color: var(--ink-2); }
+.key { display: inline-flex; align-items: center; gap: 7px; }
+.key i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+.key i.band { height: 12px; background: var(--expert-band); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--page-solid); font: 12.5px/1.5 var(--font-body); padding: 8px 12px; border-radius: 12px; white-space: nowrap; z-index: 5; box-shadow: var(--shadow); }
+
+/* buttons + inputs */
+.btn { display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 999px; padding: 11px 12px 11px 22px; cursor: pointer; font-weight: 500; background: var(--ink); color: var(--page-solid); }
+.btn .arr { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: .95rem; }
+.btn:hover { opacity: .92; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); padding: 11px 22px; }
+.btn.ghost:hover { background: var(--wash); }
+.btn.plain { padding: 11px 22px; }
+.nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+.field { display: grid; gap: 6px; min-width: 0; }
+select, input[type="text"] { background: var(--surface-solid); color: var(--ink); border: 1px solid var(--rule); border-radius: 14px; padding: 10px 14px; min-width: 0; max-width: 100%; }
+.controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+.switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; padding-bottom: 10px; }
+.switch input { appearance: none; width: 42px; height: 24px; border-radius: 999px; background: var(--rule); position: relative; cursor: pointer; margin: 0; transition: background .2s; }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+.switch input:checked { background: var(--accent); }
+.switch input:checked::after { transform: translateX(18px); }
+
+/* ---------- session stepper (pill progress, like the reference's KPI bar) ---------- */
+.stepper { display: flex; gap: 8px; align-items: end; }
+.stepper button { flex: 1 1 0; min-width: 0; border: 0; background: none; padding: 0; cursor: pointer; display: grid; gap: 8px; text-align: left; color: var(--ink); transition: flex-grow .35s ease; }
+.stepper button.on { flex-grow: 2.6; }
+.stepper .sk { font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 4px; }
+.stepper .sk b { font-weight: 400; color: var(--muted); margin-right: 4px; }
+.stepper .bar { height: 54px; border-radius: 999px; display: flex; align-items: center; padding: 0 18px; font-size: .9rem; font-variant-numeric: tabular-nums; border: 1px solid var(--rule);
+  background: repeating-linear-gradient(-55deg, transparent 0 9px, var(--wash) 9px 11px); color: var(--muted); }
+.stepper button.done .bar { background: var(--ink); color: var(--page-solid); border-color: var(--ink); }
+.stepper button.on .bar { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 500; }
+.stepper button:disabled { cursor: default; }
+@media (prefers-reduced-motion: reduce) { .stepper button { transition: none; } }
+@media (max-width: 640px) { .stepper .sk { font-size: .78rem; } .stepper .sk b { display: none; } .stepper .bar { height: 44px; padding: 0 12px; } }
+
+.step { display: grid; gap: 18px; }
+.say { font-size: clamp(1.35rem, 1.1rem + 1vw, 1.9rem); line-height: 1.25; letter-spacing: -.01em; max-width: 40ch; }
+
+/* step 0: choose */
+.g-choose { grid-template-columns: 340px minmax(0, 1fr); }
+.g-choose .settings-panel { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+@media (max-width: 900px) { .g-choose { grid-template-columns: 1fr; } .g-choose .settings-panel { grid-template-columns: 1fr; } .tcard { position: relative; top: 0; height: 380px; min-height: 0; } }
+.tcard { border-radius: var(--r-lg); overflow: hidden; position: sticky; top: 16px; align-self: start; height: min(540px, calc(100vh - 32px)); min-height: 420px; display: grid; align-content: end; box-shadow: var(--shadow);
+  background: radial-gradient(120% 80% at 50% 30%, #f3f1ec 0%, #e3dfd4 60%, #cfc8b6 100%); color: #1d1d1b;
+  --ink: #1d1d1b; --muted: #8f8d84; --surface: #f3f1ec; }
+:root[data-theme="dark"] .tcard { background: radial-gradient(120% 80% at 50% 30%, #3a3833 0%, #262420 60%, #17160f 100%); --ink: #f2f0ea; --muted: #7d7a70; --surface: #2c2a25; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tcard { background: radial-gradient(120% 80% at 50% 30%, #3a3833 0%, #262420 60%, #17160f 100%); --ink: #f2f0ea; --muted: #7d7a70; --surface: #2c2a25; } }
+.tcard svg { position: absolute; left: 8px; top: 40px; width: calc(100% - 16px); height: calc(100% - 150px); }
+.tcard .tc-foot { position: relative; padding: 70px 22px 22px; background: linear-gradient(transparent, rgba(20, 18, 12, .78)); color: #fff; display: flex; justify-content: space-between; align-items: end; gap: 12px; }
+.tc-name { font-size: 1.7rem; line-height: 1.1; letter-spacing: -.01em; word-break: break-word; }
+.tc-sub { font-size: .88rem; opacity: .78; margin-top: 4px; }
+.glass { border: 1.5px solid rgba(255, 255, 255, .7); background: rgba(255, 255, 255, .12); color: #fff; border-radius: 999px; padding: 12px 22px; cursor: pointer; backdrop-filter: blur(8px); white-space: nowrap; font-size: 1.05rem; }
+.glass:hover { background: rgba(255, 255, 255, .24); }
+.tc-chips { position: absolute; top: 18px; left: 18px; right: 18px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 1; }
+.tc-chips span { background: rgba(255, 255, 255, .7); color: #1d1d1b; border-radius: 999px; padding: 4px 12px; font-size: .8rem; backdrop-filter: blur(6px); }
+.tc-chips span.ex { background: var(--accent); }
+.skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 10px; }
+.skill { background: var(--surface-solid); border: 1px solid var(--rule); border-radius: var(--r-md); padding: 10px 12px 12px; cursor: pointer; text-align: left; color: var(--ink); display: grid; gap: 4px; transition: transform .15s, border-color .15s; }
+.skill:hover { border-color: var(--muted); transform: translateY(-1px); }
+.skill.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); --ink: #1d1d1b; --muted: #6b5a1c; --surface: var(--accent); }
+.skill svg { width: 100%; height: auto; }
+.skill b { font-size: .9rem; line-height: 1.3; font-weight: 500; }
+.skill span { font-size: .75rem; color: var(--muted); }
+.settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; align-items: end; }
+
+/* step 1: welcome */
+.greet { font-size: clamp(1.8rem, 1.3rem + 2vw, 2.8rem); line-height: 1.15; letter-spacing: -.02em; }
+.greet-en { color: var(--ink-2); margin-top: 6px; }
+.g-welcome { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 860px) { .g-welcome { grid-template-columns: 1fr; } }
+.media { margin: 0; display: grid; gap: 10px; }
+.media .stage { aspect-ratio: 4 / 3; display: grid; place-items: center; background: #fff; border-radius: var(--r-md); overflow: hidden; }
+.media .stage img, .media .stage video { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.media .stage video { width: 100%; height: 100%; background: #000; }
+.thumbs { display: flex; gap: 6px; flex-wrap: wrap; }
+.thumbs button { width: 64px; height: 48px; padding: 0; border: 2px solid var(--rule); border-radius: 12px; background: #fff; overflow: hidden; cursor: pointer; display: grid; place-items: center; font-size: .72rem; font-weight: 500; color: #1d1d1b; }
+.thumbs button img { width: 100%; height: 100%; object-fit: contain; }
+.thumbs button.on { border-color: var(--trainee); }
+.credit { font-size: .76rem; color: var(--muted); line-height: 1.45; }
+.credit a { color: inherit; }
+.history { display: grid; gap: 10px; color: var(--ink-2); }
+.guide { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+.guide .g { display: grid; gap: 8px; align-content: start; font-size: .93rem; }
+.guide ol, .guide ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 4px; }
+
+/* step 2: learn */
+.g-learn { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: start; }
+@media (max-width: 860px) { .g-learn { grid-template-columns: 1fr; } }
+#figure { max-height: 380px; }
+.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.checklist li { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 8px 0; font-size: .95rem; }
+.ck { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); }
+.ck svg { width: 18px; height: 18px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tag { font-size: .74rem; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.tag.yes { background: var(--accent); color: var(--accent-ink); }
+.tag.partial { background: var(--wash); color: var(--ink-2); border: 1px solid var(--rule); }
+.tag.no { color: var(--muted); border: 1px solid var(--rule); }
+
+/* step 3: check */
+.status { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.status > div { background: var(--surface); border: 1px solid var(--edge); border-radius: var(--r-md); padding: 14px 18px; display: grid; gap: 2px; box-shadow: var(--shadow); }
+.status .v { font-size: 1.9rem; font-weight: 300; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .88rem; font-weight: 500; padding: 6px 14px; border-radius: 999px; width: fit-content; margin-top: 4px; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill.in { color: var(--good); background: color-mix(in srgb, var(--good) 14%, transparent); }
+.pill.out { color: var(--bad); background: color-mix(in srgb, var(--bad) 16%, transparent); }
+.pill.idle { color: var(--muted); background: var(--wash); }
+.g-check { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(300px, .9fr); }
+.g-check .wide { grid-column: span 2; }
+.g-check .tall { grid-row: span 2; }
+@media (max-width: 1100px) { .g-check { grid-template-columns: 1fr 1fr; } .g-check .tall { grid-row: auto; grid-column: span 2; } }
+@media (max-width: 720px) { .g-check { grid-template-columns: 1fr; } .g-check .wide, .g-check .tall { grid-column: auto; } }
+.feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 620px; overflow-y: auto; align-content: start; }
+.feed li { border-left: 3px solid var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); padding: 10px 12px; border-radius: 4px 14px 14px 4px; font-size: .9rem; }
+.feed li b { font-size: .8rem; font-weight: 500; color: var(--bad); display: block; }
+.feed li .main { display: block; margin-top: 2px; }
+.feed li .why { display: block; font-size: .78rem; color: var(--muted); margin-top: 4px; }
+.feed li.fresh { background: color-mix(in srgb, var(--bad) 28%, transparent); }
+@media (prefers-reduced-motion: no-preference) { .feed li { transition: background .8s; } }
+.feed .empty { border: 0; background: none; color: var(--muted); padding: 0; }
+.play { display: inline-flex; gap: 8px; }
+.play .round { box-shadow: none; }
+
+/* step 4: improve */
+.g-improve { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 860px) { .g-improve { grid-template-columns: 1fr; } }
+.verdict { display: grid; gap: 18px; align-content: start; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: .93rem; margin: 6px 0 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: .8rem; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); }
+.chip.ok { color: var(--good); border-color: currentColor; }
+.chip.err { color: var(--bad); border-color: currentColor; }
+.cue { background: var(--trainee-wash); padding: 14px 16px; border-radius: var(--r-md); display: grid; gap: 10px; }
+.cue .code { font-size: .8rem; font-weight: 500; color: var(--ink-2); }
+.cue dl { display: grid; grid-template-columns: 2.8rem 1fr; gap: 6px 10px; margin: 0; }
+.cue dt { font-size: .76rem; color: var(--muted); padding-top: 3px; }
+.cue dd { margin: 0; line-height: 1.5; }
+.cue dd.mine { font-weight: 500; }
+.cue dd[lang="ja"] { font-family: var(--font-jp); }
+
+/* ---------- accuracy + verification ---------- */
+.sec-head { display: grid; gap: 6px; }
+.sec-head p { color: var(--ink-2); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+.cm { display: grid; grid-template-columns: auto 1fr 1fr; gap: 4px; font-size: .85rem; }
+.cm div { padding: 12px 10px; text-align: center; background: var(--wash); border-radius: 14px; }
+.cm .h { background: none; color: var(--muted); font-size: .76rem; display: flex; align-items: center; justify-content: center; }
+.cm .hit { background: var(--ink); color: var(--page-solid); }
+.cm b { display: block; font-size: 1.5rem; font-weight: 300; font-variant-numeric: tabular-nums; }
+.cm-wrap { display: grid; gap: 16px; }
+.shap { display: grid; gap: 8px; }
+.shap-row { display: grid; grid-template-columns: minmax(0, 12rem) 1fr 3rem; gap: 10px; align-items: center; font-size: .86rem; }
+.shap-row .bar { height: 10px; background: var(--ink); border-radius: 999px; }
+.shap-row .v { color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+.blind { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+.blind > div { display: grid; gap: 8px; align-content: start; }
+.folds { display: flex; flex-wrap: wrap; gap: 8px; }
+.fold { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-size: .85rem; background: var(--wash); border: 1px solid var(--rule); color: var(--ink); font-variant-numeric: tabular-nums; }
+.fold.test { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
+@media (prefers-reduced-motion: no-preference) { .fold { transition: background .2s, color .2s; } }
+.checks { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.checks th { text-align: left; font-weight: 400; font-size: .8rem; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+.checks td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.checks .grp td { font-weight: 500; padding-top: 18px; }
+.pass, .fail { font-size: .78rem; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+.pass { color: var(--good); background: color-mix(in srgb, var(--good) 13%, transparent); }
+.fail { color: var(--bad); background: color-mix(in srgb, var(--bad) 13%, transparent); }
+.scroll { overflow-x: auto; }
+footer.source { font-size: .8rem; color: var(--muted); max-width: 90ch; }
+</style>
+
+<div class="shell">
+<header class="top">
+  <div class="logo">Skill Twin <small>技能の双子</small></div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button type="button" role="tab" id="tab-btn-session" aria-controls="tab-session" aria-selected="true" data-tab="session" data-i18n="tab_session">Coaching session</button>
+    <button type="button" role="tab" id="tab-btn-accuracy" aria-controls="tab-accuracy" aria-selected="false" data-tab="accuracy" data-i18n="tab_accuracy">Accuracy</button>
+    <button type="button" role="tab" id="tab-btn-verify" aria-controls="tab-verify" aria-selected="false" data-tab="verify" data-i18n="tab_verify">Verification</button>
+  </nav>
+  <div class="tools">
+    <button type="button" class="round" id="lang-toggle" aria-label="日本語に切り替え"><span class="jp">日本語</span></button>
+    <button type="button" class="round" id="theme-toggle" aria-label="Switch to dark mode"></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <span class="kicker" data-i18n="kicker">Tacit skill, measured and coached</span>
+    <h1>Skill Twin</h1>
+    <p class="thesis" data-i18n-html="thesis">Retiring masters carry skill in their bodies, not in manuals. Skill Twin learns an expert's <strong>acceptable range of movement</strong> from wearable sensors, compares a trainee against it, and coaches them in their own language. Here we test the engine against a physiotherapist's ratings, on people it never trained on.</p>
+  </div>
+  <div class="bigstats" id="stats"></div>
+</section>
+
+<main>
+<!-- ======================= SESSION ======================= -->
+<div class="tabpanel" id="tab-session" role="tabpanel" aria-labelledby="tab-btn-session">
+  <div class="grid" style="gap:22px">
+    <nav class="stepper" id="stepper" aria-label="Session steps"></nav>
+
+    <div class="step" data-step="0">
+      <div class="grid g-choose">
+        <div class="tcard" id="tcard">
+          <div class="tc-chips" id="tc-chips"></div>
+          <svg id="tc-fig" viewBox="0 0 260 200" aria-hidden="true"></svg>
+          <div class="tc-foot">
+            <div><div class="tc-name" id="tc-name">Trainee</div><div class="tc-sub" id="tc-sub"></div></div>
+            <button type="button" class="glass" data-go="1" data-i18n="start_short">Start →</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3 data-i18n="choose_title">Choose a skill</h3><span class="quiet" id="card-note"></span></div>
+          <div class="skills" id="cards"></div>
+          <p class="quiet" data-i18n="no_markers">Bridging, superman, mountain climbers, plank walkout and side plank rotations have no repetition markers in the dataset, so they cannot be replayed.</p>
+        </div>
+        <div class="panel settings-panel">
+          <div class="settings">
+            <label class="field" for="who"><span class="label" data-i18n="label_who">Recorded trainee (held out)</span><select id="who"></select></label>
+            <label class="field" for="name"><span class="label" data-i18n="label_name">Name to greet</span><input type="text" id="name" value="Trainee" maxlength="30"></label>
+            <label class="field" for="lang"><span class="label" data-i18n="label_lang">Coaching language</span><select id="lang"><option value="en">English</option><option value="ja">日本語</option><option value="vi">Tiếng Việt</option><option value="hi">हिन्दी</option></select></label>
+            <label class="switch" for="speak"><input type="checkbox" id="speak"><span data-i18n="read_aloud">Read aloud</span></label>
+            <select id="ex" hidden aria-hidden="true"></select>
+          </div>
+          <button class="btn" type="button" data-go="1"><span data-i18n="start">Start session</span><span class="arr">→</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="1" hidden>
+      <div><div class="greet" id="greet"></div><p class="greet-en" id="greet-en"></p></div>
+      <div class="grid g-welcome">
+        <div class="panel"><figure class="media" id="media"></figure></div>
+        <div class="panel"><h3 data-i18n="history_title">Background</h3><div class="history" id="history"></div></div>
+      </div>
+      <div class="panel"><div class="guide" id="guide"></div></div>
+      <div class="nav"><button class="btn ghost" type="button" data-go="0" data-i18n="back">← Back</button>
+        <button class="btn" type="button" data-go="2"><span data-i18n="to_learn">How experts do it</span><span class="arr">→</span></button></div>
+    </div>
+
+    <div class="step" data-step="2" hidden>
+      <p class="say" id="say-learn"></p>
+      <div class="grid g-learn">
+        <div class="panel">
+          <svg class="chart" id="figure" viewBox="0 0 260 200" role="img" aria-label="Animated technique figure"></svg>
+          <div class="legend"><span class="key"><i style="background:var(--ink)"></i><span data-i18n="legend_side">Near side</span></span><span class="key"><i style="background:var(--trainee);height:9px;width:9px;border-radius:50%"></i><span data-i18n="legend_sensor">Sensor (EMG + IMU)</span></span></div>
+        </div>
+        <div class="panel panel-dark">
+          <div class="panel-head"><h3 data-i18n="physio_checks">What the physiotherapist checks</h3><span class="count num" id="check-count"></span></div>
+          <ul class="checklist" id="checklist"></ul>
+        </div>
+      </div>
+      <div class="nav"><button class="btn ghost" type="button" data-go="1" data-i18n="back">← Back</button>
+        <button class="btn" type="button" data-go="3"><span data-i18n="to_check">Check my readings</span><span class="arr">→</span></button></div>
+    </div>
+
+    <div class="step" data-step="3" hidden>
+      <div class="nav" style="align-items:end">
+        <p class="say" id="say-check"></p>
+        <div class="controls">
+          <label class="field" for="curve"><span class="label" data-i18n="label_signal">Signal</span><select id="curve"></select></label>
+          <label class="field" for="speed"><span class="label" data-i18n="label_speed">Speed</span><select id="speed"><option value="1">1×</option><option value="2" selected>2×</option><option value="4">4×</option></select></label>
+          <button class="btn plain" id="play" type="button">▶ Play live</button>
+        </div>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="grid g-check">
+        <div class="panel wide">
+          <div class="legend"><span class="key"><i class="band"></i><span data-i18n="legend_band">Expert range</span></span><span class="key"><i style="background:var(--expert)"></i><span data-i18n="legend_mean">Expert average</span></span><span class="key"><i style="background:var(--trainee)"></i><span data-i18n="legend_trainee">Trainee</span></span><span class="key"><i style="background:var(--bad);height:5px"></i><span data-i18n="legend_out">Outside expert range</span></span></div>
+          <svg class="chart" id="stream" viewBox="0 0 900 330" role="img" aria-label="Trainee signal over time against the expert range"></svg>
+        </div>
+        <div class="panel panel-dark tall">
+          <div class="panel-head"><h3 data-i18n="feed_title">Mistakes, window by window</h3><span class="count num" id="feed-count"></span></div>
+          <ol class="feed" id="feed"></ol>
+        </div>
+        <div class="panel"><svg class="chart" id="phasechart" viewBox="0 0 440 290" role="img" aria-label="Current repetition against the expert range"></svg></div>
+        <div class="panel"><svg class="chart" id="repbars" viewBox="0 0 440 290" role="img" aria-label="Share outside the expert range"></svg></div>
+      </div>
+      <div class="nav"><button class="btn ghost" type="button" data-go="2" data-i18n="back">← Back</button>
+        <button class="btn" type="button" data-go="4"><span data-i18n="to_improve">How to improve</span><span class="arr">→</span></button></div>
+    </div>
+
+    <div class="step" data-step="4" hidden>
+      <p class="say" id="say-improve"></p>
+      <div class="grid g-improve">
+        <div class="panel verdict" id="verdict"></div>
+        <div class="panel panel-dark"><h3 data-i18n="worst_title">Where you differed most from the experts</h3><ol class="feed" id="worst"></ol></div>
+      </div>
+      <div class="nav"><button class="btn ghost" type="button" data-go="3" data-i18n="watch_again">← Watch again</button>
+        <button class="btn" type="button" data-go="0"><span data-i18n="another">Choose another skill</span><span class="arr">↺</span></button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= ACCURACY ======================= -->
+<div class="tabpanel grid" id="tab-accuracy" role="tabpanel" aria-labelledby="tab-btn-accuracy" hidden style="gap:18px">
+  <div class="panel">
+    <div class="sec-head"><h2 data-i18n="auc_title">How accurate it is</h2><p data-i18n="auc_desc">Each rule has its own small model. Every person is tested by a model trained on the other 18. AUC 0.5 is guessing, 1.0 is perfect. Rules whose 95% interval clears 0.5 are the ones Skill Twin coaches on.</p></div>
+    <div class="legend"><span class="key"><i style="background:var(--expert)"></i><span data-i18n="legend_xgb">XGBoost (primary)</span></span><span class="key"><i style="background:var(--trainee)"></i><span data-i18n="legend_lr">Logistic regression (comparison)</span></span></div>
+    <svg class="chart" id="auc" viewBox="0 0 900 360" role="img" aria-label="AUC per rule with confidence intervals"></svg><div class="tip" hidden></div>
+  </div>
+  <div class="two">
+    <div class="panel cm-wrap" id="cms"></div>
+    <div class="panel"><svg class="chart" id="overall" viewBox="0 0 420 340" role="img" aria-label="Predicted versus physiotherapist overall score"></svg><div class="tip" hidden></div></div>
+  </div>
+  <div class="panel"><h3 data-i18n="shap_title">What each model looks at</h3><div class="two" id="shap"></div></div>
+  <div class="panel panel-dark">
+    <div class="sec-head"><h3 data-i18n="blind_title">Blind spots</h3><p data-i18n="blind_desc">Four sensors on the left arm and leg cannot judge the head, spine, feet or hands. We mark those rules as not observable instead of guessing.</p></div>
+    <div class="blind" id="obs"></div>
+  </div>
+</div>
+
+<!-- ======================= VERIFICATION ======================= -->
+<div class="tabpanel grid" id="tab-verify" role="tabpanel" aria-labelledby="tab-btn-verify" hidden style="gap:18px">
+  <div class="sec-head"><h2 data-i18n="verify_title">How we checked it is real</h2><p data-i18n="verify_desc">A model can look good by accident or by cheating. These checks would expose either.</p></div>
+  <div class="two">
+    <div class="panel">
+      <h3 data-i18n="loo_title">Leave one person out</h3>
+      <p class="quiet" data-i18n="loo_desc">The yellow person is the test person. The model is trained on the others only, then the test moves to the next person, 19 times.</p>
+      <div class="folds" id="folds"></div>
+      <div class="row nav"><span id="fold-text" class="quiet"></span><button class="btn" id="next-fold" type="button"><span data-i18n="next_person">Next person</span><span class="arr">→</span></button></div>
+    </div>
+    <div class="panel">
+      <h3 data-i18n="perm_title">Shuffled-label test</h3>
+      <p class="quiet" data-i18n="perm_desc">We shuffled the physiotherapist's answers at random and retrained the whole pipeline many times. The grey bars show the accuracy reached with shuffled answers; the amber line is the real result. A real signal sits far to the right of the grey bars.</p>
+    </div>
+  </div>
+  <div class="two" id="perm"></div>
+  <div class="panel scroll"><table class="checks" id="checks"></table></div>
+</div>
+</main>
+
+<footer class="source" data-i18n-html="source">Data: <em>A Multimodal EMG Dataset for Exercise Quality Assessment in ICE Environments</em> (Hejda, Sokol, Kotolova, Czech Technical University; Mendeley Data). 19 people, 24 exercises, 4 EMG + 4 IMU sensors on the left arm and leg, every set rated by a physiotherapist.</footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const NS = "http://www.w3.org/2000/svg";
+const $ = id => document.getElementById(id);
+
+/* ---------- interface language (top-bar toggle). Coaching cues follow the coaching-language select. ---------- */
+let uiLang = "en";
+try { if (localStorage.getItem("skilltwin-ui-lang") === "ja") uiLang = "ja"; } catch (e) { /* storage unavailable */ }
+const J = () => uiLang === "ja";
+const UI = {
+  en: {
+    tab_session: "Coaching session", tab_accuracy: "Accuracy", tab_verify: "Verification",
+    kicker: "Tacit skill, measured and coached",
+    thesis: "Retiring masters carry skill in their bodies, not in manuals. Skill Twin learns an expert's <strong>acceptable range of movement</strong> from wearable sensors, compares a trainee against it, and coaches them in their own language. Here we test the engine against a physiotherapist's ratings, on people it never trained on.",
+    source: "Data: <em>A Multimodal EMG Dataset for Exercise Quality Assessment in ICE Environments</em> (Hejda, Sokol, Kotolova, Czech Technical University; Mendeley Data). 19 people, 24 exercises, 4 EMG + 4 IMU sensors on the left arm and leg, every set rated by a physiotherapist.",
+    st_sd: "Squat depth · AUC", st_fl: "Fluidity · AUC", st_mae: "Score error",
+    st_sd_p: "Detects shallow squats on unseen people. Catches {tp} of {n} the physiotherapist marked.",
+    st_fl_p: "Detects jerky, unsmooth movement across {n} sets of 8 exercises.",
+    st_mae_p: "Average error on the 0–10 overall score. Guessing the average is off by {base}.",
+    pts: "pts",
+    steps: ["Choose", "Welcome", "Learn", "Check", "Improve"], step: "Step", now: "Now",
+    choose_title: "Choose a skill", n_skills: "{n} skills",
+    no_markers: "Bridging, superman, mountain climbers, plank walkout and side plank rotations have no repetition markers in the dataset, so they cannot be replayed.",
+    label_who: "Recorded trainee (held out)", label_name: "Name to greet", label_lang: "Coaching language", read_aloud: "Read aloud",
+    start: "Start session", start_short: "Start →", back: "← Back", to_learn: "How experts do it", to_check: "Check my readings",
+    to_improve: "How to improve", watch_again: "← Watch again", another: "Choose another skill",
+    default_name: "Trainee", person: "Person {s}", physio_of: "Physio {o}/10", expert_set: "expert set",
+    who_opt: "Person {s} · physio {o}/10{x}", who_x: " · expert", hold: "Hold", reps: "Repetitions", n_people: "{n} people",
+    history_title: "Background", legend_side: "Near side", legend_sensor: "Sensor (EMG + IMU)", physio_checks: "What the physiotherapist checks",
+    label_signal: "Signal", label_speed: "Speed", play: "▶ Play live", stop: "■ Stop",
+    legend_band: "Expert range", legend_mean: "Expert average", legend_trainee: "Trainee", legend_out: "Outside expert range",
+    feed_title: "Mistakes, window by window", flagged: "{n}", worst_title: "Where you differed most from the experts",
+    no_media: "No freely licensed media found for this skill.", video: "▶ Video",
+    with_weight: ". The drawing shows weights; the technique is the same without them.",
+    more_videos: " · {n} more video(s) when this page runs on your laptop.",
+    g_how: "How to do it", g_muscles: "Muscles worked", g_mistakes: "Common mistakes", g_safety: "Safety", g_easier: "Easier", g_harder: "Harder",
+    g_more: "Further reading: <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">Wikipedia, {title}</a> (CC BY-SA).", en_only: "",
+    s_time: "Time", s_rep: "Repetition", s_hold: "Hold progress", s_now: "Right now", s_out: "Outside range so far", s_flag: "Windows flagged",
+    st_wait: "Waiting", st_between: "Between repetitions", st_outside: "Outside range", st_inside: "Inside range",
+    stream_z: "Gap from expert average (SD) · above the dashed line = outside the range", rep_n: "rep {n}", sec: " s",
+    ph_hold: "The hold so far vs expert range", ph_cur: "Current repetition vs expert range", ph_k: "Repetition {k} of {n} vs expert range",
+    ph_x_hold: "progress through the hold", ph_x_rep: "progress through the repetition (faint = earlier reps)",
+    bar_hold: "Share of each tenth of the hold above the expert range", bar_rep: "Share of each repetition outside the expert range",
+    bar_x: "{u} · red = over {f}% outside · so far {p}%", bar_u_hold: "% of the hold", bar_u_rep: "repetition",
+    feed_none_final: "No window of this recording left the expert range on this signal.", feed_none: "No mistakes yet.",
+    worst_none: "This recording stayed within the expert range on {c}.",
+    stage_hold: "{a}–{b}% of the hold", stage_rep: "Rep {r} · {st} ({a}–{b}%)",
+    str_lot: "a lot", str_clear: "clearly", str_slight: "slightly",
+    measured: "Measured: {c} {d} {dir} the expert average ({s} outside the range) · {p}% of this window",
+    dir_more: "more than", dir_below: "below", dir_above: "above",
+    cue_generic: "Your {c} is {dir} than the experts' here. Copy the expert movement more closely.", lower: "lower", higher: "higher",
+    cue_hold_generic: "Hold the position more steadily.",
+    v_pending: "The physiotherapist's rating and Skill Twin's call appear when the recording ends.", v_verdict: "Verdict",
+    v_physio: "Physiotherapist", v_overall: "Overall", v_errors: "Errors marked", v_twin: "Skill Twin (never trained on this person)",
+    v_band: "Band score", v_lik: "{p}% error likelihood", v_cue: "Coaching cue", ok: "OK", error: "error",
+    v_hold_head: "{code} · from the expert range ({n} windows flagged)",
+    v_hold_ok: "This hold stayed close to the experts' steadiness. No cue needed.",
+    v_cue_head: "{code} · model {p}% · physiotherapist {a}", v_agrees: "agrees", v_nomark: "did not mark this",
+    v_none: "No coached error for this recording. Cues only fire for rules that passed testing (squat depth, fluidity).",
+    v_hold_model: "The hold-stability model did not pass testing (AUC about 0.53), so this feedback comes from the expert range only.",
+    auc_title: "How accurate it is",
+    auc_desc: "Each rule has its own small model. Every person is tested by a model trained on the other 18. AUC 0.5 is guessing, 1.0 is perfect. Rules whose 95% interval clears 0.5 are the ones Skill Twin coaches on.",
+    legend_xgb: "XGBoost (primary)", legend_lr: "Logistic regression (comparison)", guessing: "← guessing",
+    auc_tip: "{r} · {m}<br>AUC {a} [{lo}–{hi}]<br>balanced acc {b} · F1 {f}",
+    cm_title: "Held-out confusion matrices", cm_lab: "{r} · balanced accuracy {b}", cm_mok: "Model: OK", cm_merr: "Model: error", cm_pok: "Physio OK", cm_perr: "Physio error",
+    ov_title: "Overall score, {n} sets · Spearman {rho}", ov_x: "physiotherapist (0–10) → model, held out ↑", ov_tip: "Person {s} · {ex}<br>physio {a} · model {p}",
+    shap_title: "What each model looks at",
+    blind_title: "Blind spots", blind_desc: "Four sensors on the left arm and leg cannot judge the head, spine, feet or hands. We mark those rules as not observable instead of guessing.",
+    obs_yes: "Measured", obs_yes_p: "Angles, speed, smoothness and muscle activity cover these.",
+    obs_partial: "Proxy only", obs_partial_p: "Inferred indirectly; tested, mostly near chance.",
+    obs_no: "Not observable", obs_no_p: "Needs head, trunk, foot or hand sensors we do not have.",
+    verify_title: "How we checked it is real", verify_desc: "A model can look good by accident or by cheating. These checks would expose either.",
+    loo_title: "Leave one person out", loo_desc: "The yellow person is the test person. The model is trained on the others only, then the test moves to the next person, 19 times.",
+    next_person: "Next person", fold_text: "Round {k} of {n}: train on {m} people, test on person {p}.",
+    perm_title: "Shuffled-label test",
+    perm_desc: "We shuffled the physiotherapist's answers at random and retrained the whole pipeline many times. The grey bars show the accuracy reached with shuffled answers; the amber line is the real result. A real signal sits far to the right of the grey bars.",
+    perm_p: "p = {p} over {n} shuffles", real: "real {a}",
+    ch_check: "Check", ch_result: "Result", ch_what: "What we measured", ch_sum: "{p} of {n} checks pass.",
+    ch_push: " The failure is push-up depth: with only 6 errors the shuffled results are unstable, so we do not claim that rule.",
+    groups: {1: "Data integrity", 2: "Physics sanity", 3: "No leakage", 4: "Shuffled-label test", 5: "Reproducibility"},
+    obs_tag: {yes: "Sensors check this", partial: "Indirect only", no: "Physio only"},
+    theme_to_dark: "Switch to dark mode", theme_to_light: "Switch to light mode", lang_to: "日本語に切り替え",
+  },
+  ja: {
+    tab_session: "コーチング", tab_accuracy: "精度", tab_verify: "検証",
+    kicker: "暗黙知を測り、伝える",
+    thesis: "引退する熟練者の技能は、マニュアルではなく身体に宿っています。Skill Twinはウェアラブルセンサーから熟練者の<strong>許容できる動きの範囲</strong>を学び、トレーニーをその範囲と比較して、本人の言語でコーチングします。ここでは、学習に使っていない人のデータで、理学療法士の評価と照らし合わせてエンジンを検証します。",
+    source: "データ：<em>A Multimodal EMG Dataset for Exercise Quality Assessment in ICE Environments</em>（Hejda, Sokol, Kotolova、チェコ工科大学、Mendeley Data）。19人・24種目。左腕と左脚にEMG 4個＋IMU 4個を装着し、全セットを理学療法士が評価。",
+    st_sd: "スクワットの深さ・AUC", st_fl: "なめらかさ・AUC", st_mae: "評価の誤差",
+    st_sd_p: "未学習の人の浅いスクワットを検出。理学療法士が指摘した{n}件中{tp}件を捉えます。",
+    st_fl_p: "8種目・{n}セットで、ぎこちない動きを検出します。",
+    st_mae_p: "0〜10の総合評価での平均誤差。平均値で推測すると{base}ずれます。",
+    pts: "点",
+    steps: ["選ぶ", "ようこそ", "学ぶ", "チェック", "改善"], step: "ステップ", now: "いまここ",
+    choose_title: "スキルを選ぶ", n_skills: "{n}種目",
+    no_markers: "ブリッジ、スーパーマン、マウンテンクライマー、プランクウォークアウト、サイドプランク回旋は、データセットに反復マーカーがないため再生できません。",
+    label_who: "記録されたトレーニー（学習から除外）", label_name: "呼びかける名前", label_lang: "コーチングの言語", read_aloud: "読み上げ",
+    start: "セッション開始", start_short: "開始 →", back: "← 戻る", to_learn: "熟練者のやり方", to_check: "測定値をチェック",
+    to_improve: "改善のしかた", watch_again: "← もう一度見る", another: "別のスキルを選ぶ",
+    default_name: "トレーニー", person: "{s}番の人", physio_of: "理学療法士 {o}/10", expert_set: "熟練者のセット",
+    who_opt: "{s}番 · 理学療法士 {o}/10{x}", who_x: " · 熟練者", hold: "ホールド", reps: "反復", n_people: "{n}人",
+    history_title: "背景（英語）", legend_side: "手前側", legend_sensor: "センサー（EMG＋IMU）", physio_checks: "理学療法士のチェック項目",
+    label_signal: "信号", label_speed: "速度", play: "▶ ライブ再生", stop: "■ 停止",
+    legend_band: "熟練者の範囲", legend_mean: "熟練者の平均", legend_trainee: "トレーニー", legend_out: "範囲外",
+    feed_title: "区間ごとのミス", flagged: "{n}", worst_title: "熟練者との差が最も大きかった場面",
+    no_media: "このスキルの自由ライセンス素材は見つかりませんでした。", video: "▶ 動画",
+    with_weight: "。図はウェイト付きですが、なしでもフォームは同じです。",
+    more_videos: "・ローカルで実行すると動画があと{n}本表示されます。",
+    g_how: "やり方", g_muscles: "使う筋肉", g_mistakes: "よくある間違い", g_safety: "安全", g_easier: "易しく", g_harder: "難しく",
+    g_more: "参考：<a href=\"{url}\" target=\"_blank\" rel=\"noopener\">Wikipedia「{title}」</a>（CC BY-SA）。", en_only: "解説の本文は英語です。",
+    s_time: "時間", s_rep: "反復", s_hold: "ホールドの進行", s_now: "いま", s_out: "これまでの範囲外", s_flag: "指摘した区間",
+    st_wait: "待機中", st_between: "反復の合間", st_outside: "範囲外", st_inside: "範囲内",
+    stream_z: "熟練者平均との差（SD）・破線より上は範囲外", rep_n: "{n}回目", sec: "秒",
+    ph_hold: "ここまでのホールドと熟練者の範囲", ph_cur: "現在の反復と熟練者の範囲", ph_k: "{n}回中{k}回目と熟練者の範囲",
+    ph_x_hold: "ホールドの進行", ph_x_rep: "反復の進行（薄い線は前の反復）",
+    bar_hold: "ホールドの各10%区間で範囲を超えた割合", bar_rep: "各反復で範囲外だった割合",
+    bar_x: "{u}・赤＝{f}%超が範囲外・これまで{p}%", bar_u_hold: "ホールドの%", bar_u_rep: "反復",
+    feed_none_final: "この信号では、範囲を外れた区間はありませんでした。", feed_none: "まだミスはありません。",
+    worst_none: "この記録は{c}で熟練者の範囲内に収まりました。",
+    stage_hold: "ホールドの{a}〜{b}%", stage_rep: "{r}回目・{st}（{a}〜{b}%）",
+    str_lot: "大きく", str_clear: "はっきり", str_slight: "わずかに",
+    measured: "測定値：{c}が熟練者の平均より{d}{dir}（{s}範囲外）・この区間の{p}%",
+    dir_more: "多い", dir_below: "低い", dir_above: "高い",
+    cue_generic: "ここでは{c}が熟練者より{dir}です。熟練者の動きにもっと近づけましょう。", lower: "低い", higher: "高い",
+    cue_hold_generic: "姿勢をもっと安定して保ちましょう。",
+    v_pending: "記録の再生が終わると、理学療法士の評価とSkill Twinの判定が表示されます。", v_verdict: "判定",
+    v_physio: "理学療法士", v_overall: "総合", v_errors: "指摘されたエラー", v_twin: "Skill Twin（この人のデータでは未学習）",
+    v_band: "バンドスコア", v_lik: "エラーの可能性 {p}%", v_cue: "コーチングの一言", ok: "OK", error: "エラー",
+    v_hold_head: "{code}・熟練者の範囲から（{n}区間で指摘）",
+    v_hold_ok: "このホールドは熟練者並みに安定していました。アドバイスは不要です。",
+    v_cue_head: "{code}・モデル {p}%・{a}", v_agrees: "理学療法士も指摘", v_nomark: "理学療法士の指摘なし",
+    v_none: "この記録には指導対象のエラーはありません。アドバイスは検証に合格したルール（スクワットの深さ、なめらかさ）でのみ出します。",
+    v_hold_model: "ホールド安定性のモデルは検証に合格しなかった（AUC約0.53）ため、このフィードバックは熟練者の範囲のみに基づきます。",
+    auc_title: "どれくらい正確か",
+    auc_desc: "ルールごとに小さなモデルを用意しています。各人は、残り18人で学習したモデルでテストします。AUC 0.5は当て推量、1.0は完璧です。95%区間が0.5を上回るルールだけを、Skill Twinはコーチングに使います。",
+    legend_xgb: "XGBoost（主モデル）", legend_lr: "ロジスティック回帰（比較）", guessing: "← 当て推量",
+    auc_tip: "{r}・{m}<br>AUC {a} [{lo}–{hi}]<br>バランス精度 {b}・F1 {f}",
+    cm_title: "未学習者での混同行列", cm_lab: "{r}・バランス精度 {b}", cm_mok: "モデル：OK", cm_merr: "モデル：エラー", cm_pok: "理学療法士：OK", cm_perr: "理学療法士：エラー",
+    ov_title: "総合評価・{n}セット・スピアマン {rho}", ov_x: "理学療法士（0〜10）→　モデル（未学習者）↑", ov_tip: "{s}番・{ex}<br>理学療法士 {a}・モデル {p}",
+    shap_title: "各モデルが注目する特徴",
+    blind_title: "見えないもの", blind_desc: "左腕と左脚の4つのセンサーでは、頭・背骨・足・手は判断できません。推測はせず「観測できない」と明示しています。",
+    obs_yes: "測定できる", obs_yes_p: "角度・速度・なめらかさ・筋活動でカバーします。",
+    obs_partial: "代理指標のみ", obs_partial_p: "間接的に推定。検証では概ね偶然レベルでした。",
+    obs_no: "観測できない", obs_no_p: "頭・体幹・足・手のセンサーが必要です（未装着）。",
+    verify_title: "本物かどうかの確認", verify_desc: "モデルは偶然や不正でも良く見えることがあります。以下のチェックは、そのどちらも暴きます。",
+    loo_title: "1人抜き交差検証", loo_desc: "黄色の人がテスト対象です。モデルは他の人だけで学習し、テスト対象を次の人へ移して19回繰り返します。",
+    next_person: "次の人", fold_text: "{n}回中{k}回目：{m}人で学習し、{p}番の人でテスト。",
+    perm_title: "ラベルシャッフル検定",
+    perm_desc: "理学療法士の回答をランダムに並べ替え、パイプライン全体を何度も学習し直しました。灰色の棒はシャッフルした回答での精度、琥珀色の線は実際の結果です。本物の信号なら、灰色の棒よりずっと右に位置します。",
+    perm_p: "{n}回のシャッフルで p = {p}", real: "実際 {a}",
+    ch_check: "チェック", ch_result: "結果", ch_what: "測定内容", ch_sum: "{n}件中{p}件が合格。",
+    ch_push: "不合格は腕立て伏せの深さです。エラーが6件しかなくシャッフル結果が不安定なため、このルールは主張しません。",
+    groups: {1: "データの整合性", 2: "物理的な妥当性", 3: "リークなし", 4: "ラベルシャッフル検定", 5: "再現性"},
+    obs_tag: {yes: "センサーで確認", partial: "間接的のみ", no: "理学療法士のみ"},
+    theme_to_dark: "ダークモードに切り替え", theme_to_light: "ライトモードに切り替え", lang_to: "Switch to English",
+  },
+};
+const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? "");
+const t = (k, o = {}) => { const v = UI[uiLang][k] ?? UI.en[k]; return typeof v === "string" ? fill(v, o) : v; };
+
+const RULE = {squat_depth: "Squat depth", pushup_depth: "Push-up depth", movement_fluidity: "Movement fluidity",
+  tempo: "Tempo consistency", technique: "Technique holds up", stability: "Hold stability",
+  hip_angle: "Hip line (proxy)", knee_joint_axis: "Knee alignment (proxy)"};
+const RULE_JA = {squat_depth: "スクワットの深さ", pushup_depth: "腕立て伏せの深さ", movement_fluidity: "動きのなめらかさ",
+  tempo: "テンポの安定", technique: "フォームの維持", stability: "ホールドの安定",
+  hip_angle: "腰のライン（代理指標）", knee_joint_axis: "膝の向き（代理指標）"};
+const ruleName = r => (J() ? RULE_JA : RULE)[r] || r;
+const CURVE = {knee: ["Knee bend", "°"], thigh: ["Thigh rotation", "°"], shank: ["Shin rotation", "°"],
+  uarm: ["Upper-arm rotation", "°"], env_rectus: ["Thigh muscle EMG", "× peak"], env_gastroc: ["Calf muscle EMG", "× peak"],
+  env_biceps: ["Biceps EMG", "× peak"], env_triceps: ["Triceps EMG", "× peak"],
+  hold_thigh: ["Thigh movement from held position", "°"], hold_shank: ["Shin movement from held position", "°"],
+  hold_uarm: ["Upper-arm movement from held position", "°"]};
+const CURVE_JA = {knee: "膝の曲がり", thigh: "太ももの回転", shank: "すねの回転", uarm: "上腕の回転",
+  env_rectus: "太もも前面の筋電", env_gastroc: "ふくらはぎの筋電", env_biceps: "上腕二頭筋の筋電", env_triceps: "上腕三頭筋の筋電",
+  hold_thigh: "保持位置からの太ももの動き", hold_shank: "保持位置からのすねの動き", hold_uarm: "保持位置からの上腕の動き"};
+const curveName = c => J() ? CURVE_JA[c] : CURVE[c][0];
+const curveLow = c => J() ? CURVE_JA[c] : CURVE[c][0].toLowerCase();
+const curveUnit = c => CURVE[c][1] === "°" ? "°" : (J() ? "×ピーク" : "× peak");
+const FEAT = {shank_max_mean: "Max shin rotation", shank_rom_mean: "Shin range of motion", t_bottom_mean: "Timing of lowest point",
+  knee_rom_mean: "Knee range of motion", knee_max_mean: "Max knee bend", thigh_max_mean: "Max thigh rotation", thigh_rom_mean: "Thigh range",
+  out_shank: "Shin outside band", out_knee: "Knee outside band", out_thigh: "Thigh outside band", z_shank: "Shin vs expert",
+  z_knee: "Knee vs expert", z_thigh: "Thigh vs expert", uarm_rom_mean: "Upper-arm range of motion", uarm_max_mean: "Max upper-arm rotation",
+  out_uarm: "Upper arm outside band", uarm_max_cv: "Arm depth variability", env_peak_triceps_mean: "Triceps peak EMG",
+  env_peak_biceps_mean: "Biceps peak EMG", speed_uarm_mean: "Upper-arm speed", z_uarm: "Upper arm vs expert",
+  ldlj_shank_mean: "Shin jerkiness", ldlj_thigh_mean: "Thigh jerkiness", ldlj_uarm_mean: "Upper-arm jerkiness",
+  speed_thigh_cv: "Thigh speed variability", speed_uarm_cv: "Arm speed variability", speed_thigh_mean: "Thigh peak speed",
+  dur_cv: "Rep-time variability", dur_mean: "Rep duration", dist: "Distance from band"};
+const FEAT_JA = {shank_max_mean: "すねの最大回転", shank_rom_mean: "すねの可動域", t_bottom_mean: "最下点のタイミング",
+  knee_rom_mean: "膝の可動域", knee_max_mean: "膝の最大屈曲", thigh_max_mean: "太ももの最大回転", thigh_rom_mean: "太ももの可動域",
+  out_shank: "すねの範囲外率", out_knee: "膝の範囲外率", out_thigh: "太ももの範囲外率", z_shank: "すね（熟練者比）",
+  z_knee: "膝（熟練者比）", z_thigh: "太もも（熟練者比）", uarm_rom_mean: "上腕の可動域", uarm_max_mean: "上腕の最大回転",
+  out_uarm: "上腕の範囲外率", uarm_max_cv: "腕の深さのばらつき", env_peak_triceps_mean: "上腕三頭筋のピーク筋電",
+  env_peak_biceps_mean: "上腕二頭筋のピーク筋電", speed_uarm_mean: "上腕の速度", z_uarm: "上腕（熟練者比）",
+  ldlj_shank_mean: "すねのぎこちなさ", ldlj_thigh_mean: "太もものぎこちなさ", ldlj_uarm_mean: "上腕のぎこちなさ",
+  speed_thigh_cv: "太もも速度のばらつき", speed_uarm_cv: "腕の速度のばらつき", speed_thigh_mean: "太ももの最大速度",
+  dur_cv: "反復時間のばらつき", dur_mean: "反復時間", dist: "バンドからの距離"};
+const featName = f => (J() ? FEAT_JA : FEAT)[f] || f;
+const EX_JA = {"Standard squat": "スタンダードスクワット", "Wide squat": "ワイドスクワット", "Jump squats": "ジャンプスクワット",
+  "Lunge (left leg forward)": "ランジ（左脚前）", "Lunge (right leg forward)": "ランジ（右脚前）", "Push-ups": "腕立て伏せ",
+  "Triceps push-ups": "トライセプス・プッシュアップ", "Burpees": "バーピー", "Squat hold": "スクワット・ホールド",
+  "Wide squat hold": "ワイドスクワット・ホールド", "Lunge hold (left leg)": "ランジ・ホールド（左脚）", "Lunge hold (right leg)": "ランジ・ホールド（右脚）",
+  "Extended arm plank hold": "プランク（腕伸ばし）", "Forearm plank hold": "フォアアーム・プランク", "Side plank hold": "サイドプランク",
+  "Side plank hold (R side)": "サイドプランク（右側）", "Bridging hold": "ブリッジ・ホールド", "Superman hold": "スーパーマン・ホールド"};
+const exName = ex => J() ? EX_JA[ex] || ex : ex;
+const LANG = {en: "EN", ja: "日本語", vi: "VI", hi: "हिं"};
+
+/* what the physiotherapist checks (parameters.pdf, shortened) */
+const RULE_DESC = {
+  foot_position: "Feet shoulder-width apart or slightly wider", toe_direction: "Toes turned slightly out",
+  feet: "Heels and toes stay on the ground", ankle_joint_axis: "Ankles do not roll inward",
+  squat_depth: "Hips at least level with the knees", knee_joint_axis: "Knees track over the toes, not caving in",
+  spine_alignment: "Spine naturally straight", head_axis: "Head neutral, in line with the spine",
+  movement_fluidity: "Smooth, no swinging or jerks", technique: "Same technique from first to last repetition",
+  tempo: "Steady pace throughout", hold_and_tempo: "Steady pace throughout",
+  stability: "Holds the position without losing balance or shaking", lower_limb_position: "Feet hip-width apart",
+  center_of_gravity: "Weight spread evenly over both legs", hand_position: "Hands placed under the shoulders",
+  finger_direction: "Fingers pointing forward", elbow_position: "Elbows at the right angle to the body",
+  pushup_depth: "Chest down to at least elbow level", full_range_of_motion: "Full range of motion at the top",
+  hip_angle: "Body in one straight line, hips not sagging", support_angle: "Support directly under the shoulders",
+  elbow_extension: "Elbows straight, not over-extended", full_hip_extension: "Hips fully extended",
+  body_line: "Head, trunk and hips in one line", jump_height: "Powerful jump with a clear push-off",
+  landing: "Soft landing, no heel strike", transition_to_squat_I: "Smooth drop from the jump into the squat",
+  transition_to_plank_I: "Controlled move into the plank", plank_position: "Straight plank, no sagging",
+  body_down_to_floor: "Body lowered under control", transition_to_plank_II: "Smooth return to the plank",
+  transition_to_squat_II: "Controlled return to the squat", arm_position: "Arms extended in front of the head",
+  leg_position: "Legs straight", movement_symmetry: "Both sides work evenly", range_of_motion: "Full range of arm movement",
+  limb_movement_uniformity: "Arms and legs lift together"};
+const RULE_DESC_JA = {
+  foot_position: "足は肩幅かやや広め", toe_direction: "つま先はやや外向き", feet: "かかととつま先は床につけたまま",
+  ankle_joint_axis: "足首が内側に倒れない", squat_depth: "腰が少なくとも膝の高さまで下がる", knee_joint_axis: "膝はつま先の方向に、内側に入らない",
+  spine_alignment: "背骨は自然にまっすぐ", head_axis: "頭は背骨と一直線で中立", movement_fluidity: "反動やぎこちなさがなく、なめらか",
+  technique: "最初から最後まで同じフォーム", tempo: "一定のペース", hold_and_tempo: "一定のペース",
+  stability: "バランスを崩したり震えたりせずに姿勢を保つ", lower_limb_position: "足は腰幅", center_of_gravity: "体重を両脚に均等に",
+  hand_position: "手は肩の真下", finger_direction: "指は前向き", elbow_position: "ひじは体に対して正しい角度",
+  pushup_depth: "胸が少なくともひじの高さまで下がる", full_range_of_motion: "上で可動域いっぱいまで", hip_angle: "体が一直線で、腰が落ちない",
+  support_angle: "支えは肩の真下", elbow_extension: "ひじはまっすぐ、伸ばしすぎない", full_hip_extension: "股関節をしっかり伸ばす",
+  body_line: "頭・体幹・腰が一直線", jump_height: "はっきり踏み切る力強いジャンプ", landing: "かかとから落ちず、柔らかく着地",
+  transition_to_squat_I: "ジャンプからスクワットへなめらかに", transition_to_plank_I: "コントロールしてプランクへ",
+  plank_position: "まっすぐなプランク、腰が落ちない", body_down_to_floor: "コントロールして体を下ろす",
+  transition_to_plank_II: "なめらかにプランクへ戻る", transition_to_squat_II: "コントロールしてスクワットへ戻る",
+  arm_position: "腕は頭の前に伸ばす", leg_position: "脚はまっすぐ", movement_symmetry: "左右均等に動く",
+  range_of_motion: "腕を可動域いっぱいに動かす", limb_movement_uniformity: "腕と脚を同時に上げる",
+  // no English description exists for these; the Japanese is the rule name translated
+  core_stability: "体幹の安定", core_stability_I: "体幹の安定 I", core_stability_II: "体幹の安定 II", hip_joint_angle: "股関節の角度",
+  leg_placement: "脚の位置", plank_alignment: "プランクの姿勢ライン", weight_distribution: "体重配分"};
+const ruleDesc = r => (J() ? RULE_DESC_JA : RULE_DESC)[r] || r.replace(/_/g, " ");
+const OBS_CLS = {yes: "yes", partial: "partial", no: "no"};
+
+/* history per exercise family (English only) */
+const HISTORY = {
+  squat: ["Squatting is one of the oldest human movement patterns: people have rested, worked and cooked in a deep squat for thousands of years.",
+    "As training, it appears in many traditions. Indian pehlwani wrestlers practise hundreds of bodyweight squats called <i>baithak</i>, and the barbell squat became a pillar of strength training in the 20th century.",
+    "Physiotherapists use it to see how the hips, knees and ankles work together."],
+  wide: ["The wide, sumo-style stance turns the toes out and shifts more of the work to the inner thighs and hips."],
+  jump: ["Jump squats belong to plyometrics: a quick stretch of the muscle followed by an explosive push.",
+    "Soviet sports scientist Yuri Verkhoshansky developed this 'shock method' for jumpers in the 1960s. It is now standard in sports from volleyball to sprinting."],
+  lunge: ["The lunge takes its name from fencing, where the long attacking step forward is called a lunge.",
+    "As an exercise it trains one leg at a time, so balance and left–right differences show up clearly."],
+  pushup: ["The push-up is the classic bodyweight exercise of military and school fitness tests around the world.",
+    "Indian wrestlers have long trained a flowing variant called the <i>dand</i>. The physiotherapist looks for a straight body and a full range of motion."],
+  triceps: ["With the hands under the shoulders and the elbows close to the body, the work shifts to the triceps at the back of the upper arm."],
+  plank: ["Planks are isometric: the muscles work hard while the body stays still.",
+    "They became a staple of core training as research in the 1990s and 2000s showed how trunk stability protects the spine."],
+  side: ["The side plank, or side bridge, is one of spine researcher Stuart McGill's 'big three' exercises for back health, together with the curl-up and the bird dog."],
+  bridge: ["The bridge, lifting the hips while lying on the back, is a staple of physiotherapy and rehabilitation for the hips and lower back."],
+  superman: ["Named after the flying pose, the superman strengthens the muscles along the back of the body while lying face down."],
+  burpee: ["The burpee is named after American physiologist Royal H. Burpee, who designed it in the 1930s as a quick fitness test.",
+    "During the Second World War the US armed forces used it to assess recruits."],
+};
+const EX_HISTORY = {
+  "Standard squat": ["squat"], "Wide squat": ["squat", "wide"], "Squat hold": ["squat"], "Wide squat hold": ["squat", "wide"],
+  "Jump squats": ["jump"], "Lunge (left leg forward)": ["lunge"], "Lunge (right leg forward)": ["lunge"],
+  "Lunge hold (left leg)": ["lunge"], "Lunge hold (right leg)": ["lunge"], "Push-ups": ["pushup"],
+  "Triceps push-ups": ["pushup", "triceps"], "Extended arm plank hold": ["plank"], "Forearm plank hold": ["plank"],
+  "Side plank hold": ["plank", "side"], "Side plank hold (R side)": ["plank", "side"], "Bridging hold": ["bridge"],
+  "Superman hold": ["superman"], "Burpees": ["burpee"]};
+
+/* session lines in four languages */
+const LINES = {
+  greet: {en: "Welcome, {name}! Today you will practise: {ex}.", ja: "ようこそ、{name}さん！今日の練習は「{ex}」です。",
+    vi: "Chào mừng {name}! Hôm nay bạn sẽ luyện tập: {ex}.", hi: "स्वागत है, {name}! आज आप अभ्यास करेंगे: {ex}।"},
+  learn: {en: "Here is how the experts do it, and what the physiotherapist looks for.", ja: "熟練者のやり方と、理学療法士がチェックするポイントです。",
+    vi: "Đây là cách các chuyên gia thực hiện và những điểm chuyên viên vật lý trị liệu kiểm tra.", hi: "विशेषज्ञ इसे ऐसे करते हैं, और फिज़ियोथेरेपिस्ट इन बातों को देखते हैं।"},
+  check: {en: "Now we will check your readings against the experts' readings.", ja: "では、あなたの測定値を熟練者の測定値と比べてみましょう。",
+    vi: "Bây giờ chúng ta sẽ so sánh số đo của bạn với số đo của các chuyên gia.", hi: "अब हम आपकी रीडिंग की तुलना विशेषज्ञों की रीडिंग से करेंगे।"},
+  improve: {en: "Here is how to perform better.", ja: "上達のためのアドバイスです。", vi: "Đây là cách để bạn làm tốt hơn.", hi: "बेहतर करने के लिए यह सलाह है।"},
+  good: {en: "Well done. Your movement stayed close to the experts'.", ja: "よくできました。動きは熟練者に近いままでした。",
+    vi: "Làm tốt lắm. Chuyển động của bạn gần với các chuyên gia.", hi: "बहुत बढ़िया। आपकी गति विशेषज्ञों के करीब रही।"},
+};
+const VOICE = {en: "en-US", ja: "ja-JP", vi: "vi-VN", hi: "hi-IN"};
+
+const el = (tag, attrs = {}, parent) => {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+const lin = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0 || 1) * (r1 - r0);
+const pathOf = (xs, ys, sx, sy) => {
+  let d = "", pen = false;
+  ys.forEach((y, i) => {
+    if (y == null) { pen = false; return; }
+    d += (pen ? "L" : "M") + sx(xs[i]).toFixed(1) + "," + sy(y).toFixed(1);
+    pen = true;
+  });
+  return d;
+};
+const nice = (lo, hi, n = 5) => {
+  const span = hi - lo || 1, raw = span / n, mag = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
+  const out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(6));
+  return out;
+};
+const fmt = (v, d = 1) => v == null ? "–" : (+v).toFixed(d);
+function tipFor(svg) {
+  const tip = svg.parentElement.querySelector(".tip");
+  return {
+    show(evt, html) {
+      tip.innerHTML = html; tip.hidden = false;
+      const box = svg.parentElement.getBoundingClientRect();
+      let x = evt.clientX - box.left + 14;
+      if (x + tip.offsetWidth > box.width - 8) x = evt.clientX - box.left - tip.offsetWidth - 14;
+      tip.style.left = x + "px"; tip.style.top = (evt.clientY - box.top + 14) + "px";
+    },
+    hide() { tip.hidden = true; }
+  };
+}
+function svgX(svg, evt) {
+  const p = svg.createSVGPoint(); p.x = evt.clientX; p.y = evt.clientY;
+  return p.matrixTransform(svg.getScreenCTM().inverse());
+}
+function axisY(g, ticks, sy, x0, x1, label) {
+  ticks.forEach(v => {
+    el("line", {x1: x0, x2: x1, y1: sy(v), y2: sy(v), style: "stroke:var(--rule)"}, g);
+    el("text", {x: x0 - 8, y: sy(v) + 4, "text-anchor": "end"}, g).textContent = v;
+  });
+  if (label) el("text", {x: x0, y: sy(ticks[ticks.length - 1]) - 10, class: "title"}, g).textContent = label;
+}
+
+/* ---------- technique figures ----------
+   Side view. Angles in degrees from vertical; positive = towards the front (right).
+   t: trunk (from vertical up), a/b: near/far leg [thigh, shin], ua/ub: near/far arm [upper, fore]. */
+const LEN = {t: 46, th: 40, sh: 40, ua: 28, fa: 26};
+const P = (t, a, b, ua, ub, lift = 0) => ({t, a, b, ua, ub, lift});
+const STAND = P(0, [2, 0], [-2, 0], [6, 6], [-4, -4]);
+const SQ = P(40, [90, -25], [88, -25], [85, 85], [82, 82]);
+const WSQ = P(22, [78, -15], [76, -15], [60, 60], [58, 58]);
+const SQ_HANDS = P(48, [95, -30], [93, -30], [18, 8], [14, 6]);
+const JUMP = P(0, [0, 0], [-4, -2], [165, 168], [160, 165], 42);
+const SQ_ARMS_BACK = P(42, [90, -25], [88, -25], [-35, -30], [-38, -32]);
+const LUNGE_UP = P(0, [12, 0], [-14, -8], [8, 8], [-6, -6]);
+const LUNGE_DOWN = P(0, [85, 0], [-12, -95], [5, 5], [-5, -5]);
+const PU_TOP = P(75, [-75, -75], [-75, -75], [0, 0], [-2, -2]);
+const PU_LOW = P(86, [-86, -86], [-86, -86], [-62, 6], [-64, 4]);
+const TPU_LOW = P(86, [-86, -86], [-86, -86], [-80, 0], [-82, -2]);
+const FA_PLANK = P(82, [-80, -80], [-80, -80], [0, 90], [-2, 90]);
+const SIDE_PLANK = P(68, [-66, -66], [-66, -66], [0, 90], [150, 150]);
+const BRIDGE = P(-112, [108, -8], [106, -8], [92, 90], [90, 88]);
+const SUPERMAN = P(78, [-100, -100], [-98, -98], [100, 100], [98, 98]);
+const FIG = {
+  "Standard squat": {frames: [STAND, SQ], x: 128}, "Wide squat": {frames: [STAND, WSQ], x: 128},
+  "Squat hold": {frames: [SQ], x: 128}, "Wide squat hold": {frames: [WSQ], x: 128},
+  "Jump squats": {frames: [STAND, SQ_ARMS_BACK, JUMP], x: 128},
+  "Lunge (left leg forward)": {frames: [LUNGE_UP, LUNGE_DOWN], x: 150, sensorLeg: "a"},
+  "Lunge (right leg forward)": {frames: [LUNGE_UP, LUNGE_DOWN], x: 150, sensorLeg: "b"},
+  "Lunge hold (left leg)": {frames: [LUNGE_DOWN], x: 150, sensorLeg: "a"},
+  "Lunge hold (right leg)": {frames: [LUNGE_DOWN], x: 150, sensorLeg: "b"},
+  "Push-ups": {frames: [PU_TOP, PU_LOW], x: 52}, "Triceps push-ups": {frames: [PU_TOP, TPU_LOW], x: 52},
+  "Extended arm plank hold": {frames: [PU_TOP], x: 52}, "Forearm plank hold": {frames: [FA_PLANK], x: 48},
+  "Side plank hold": {frames: [SIDE_PLANK], x: 52}, "Side plank hold (R side)": {frames: [SIDE_PLANK], x: 52},
+  "Bridging hold": {frames: [BRIDGE], x: 40}, "Superman hold": {frames: [SUPERMAN], x: 30},
+  "Burpees": {frames: [STAND, SQ_HANDS, PU_TOP, SQ_HANDS, JUMP], x: 120},
+};
+const v2 = (deg, len, up = false) => [Math.sin(deg * Math.PI / 180) * len, (up ? -1 : 1) * Math.cos(deg * Math.PI / 180) * len];
+const add = (p, d) => [p[0] + d[0], p[1] + d[1]];
+function joints(p) {
+  const hip = [0, 0], neck = add(hip, v2(p.t, LEN.t, true));
+  const head = add(neck, v2(p.t, 12, true));
+  const leg = l => { const knee = add(hip, v2(l[0], LEN.th)); return [hip, knee, add(knee, v2(l[1], LEN.sh))]; };
+  const arm = a => { const elb = add(neck, v2(a[0], LEN.ua)); return [neck, elb, add(elb, v2(a[1], LEN.fa))]; };
+  return {hip, neck, head, a: leg(p.a), b: leg(p.b), ua: arm(p.ua), ub: arm(p.ub)};
+}
+function lerpPose(p, q, u) {
+  const m = (x, y) => x + (y - x) * u, mm = (x, y) => [m(x[0], y[0]), m(x[1], y[1])];
+  return {t: m(p.t, q.t), a: mm(p.a, q.a), b: mm(p.b, q.b), ua: mm(p.ua, q.ua), ub: mm(p.ub, q.ub), lift: m(p.lift, q.lift)};
+}
+function drawFigure(svg, spec, pose, ground = 184) {
+  svg.innerHTML = "";
+  const Jt = joints(pose), anchor = Jt[spec.sensorLeg === "b" ? "b" : "a"][2];
+  const pts = [Jt.head, ...Jt.a, ...Jt.b, ...Jt.ua, ...Jt.ub, Jt.neck];
+  const low = Math.max(...pts.map(q => q[1]), Jt.head[1] + 9);
+  // lying exercises: pin the body's left end; upright ones: pin the standing foot
+  const lying = Math.abs(spec.frames[0].t) > 60;
+  const tx = lying ? spec.x - Math.min(...pts.map(q => q[0]), Jt.head[0] - 9) : spec.x - anchor[0];
+  const ty = ground - low - pose.lift;
+  const T = q => [q[0] + tx, q[1] + ty];
+  el("line", {x1: 6, x2: 254, y1: ground, y2: ground, style: "stroke:var(--muted);stroke-width:1.5"}, svg);
+  const limb = (seg, col, w) => el("polyline", {points: seg.map(T).map(q => q.join(",")).join(" "), fill: "none",
+    style: `stroke:${col};stroke-width:${w};stroke-linecap:round;stroke-linejoin:round`}, svg);
+  limb(Jt.b, "var(--muted)", 6); limb(Jt.ub, "var(--muted)", 5);
+  limb([Jt.hip, Jt.neck], "var(--ink)", 8); limb(Jt.a, "var(--ink)", 6.5); limb(Jt.ua, "var(--ink)", 5.5);
+  const h = T(Jt.head);
+  el("circle", {cx: h[0], cy: h[1], r: 9, style: "fill:var(--surface);stroke:var(--ink);stroke-width:3"}, svg);
+  const leg = Jt[spec.sensorLeg === "b" ? "b" : "a"], mid = (p, q) => T([(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]);
+  [mid(leg[0], leg[1]), mid(leg[1], leg[2]), mid(Jt.ua[0], Jt.ua[1])].forEach(q =>
+    el("circle", {cx: q[0], cy: q[1], r: 4.5, style: "fill:var(--trainee);stroke:var(--surface);stroke-width:1.5"}, svg));
+}
+const stillPose = spec => spec.frames[spec.frames.length > 1 ? 1 : 0];
+let figRaf = null;
+function animateFigure(ex) {
+  cancelAnimationFrame(figRaf);
+  const svg = $("figure"), spec = FIG[ex];
+  if (!spec) { svg.innerHTML = ""; return; }
+  const still = spec.frames.length === 1 || matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (still) { drawFigure(svg, spec, stillPose(spec)); return; }
+  const seg = 1100, t0 = performance.now(), n = spec.frames.length;
+  const tick = now => {
+    // the first frame's timestamp can be slightly earlier than t0; a negative k would index frames[-1]
+    const k = (Math.max(0, now - t0) / seg) % n, i = Math.floor(k), u = k - i, s = u * u * (3 - 2 * u);
+    drawFigure(svg, spec, lerpPose(spec.frames[i], spec.frames[(i + 1) % n], s));
+    figRaf = requestAnimationFrame(tick);
+  };
+  figRaf = requestAnimationFrame(tick);
+}
+
+/* ---------- hero stats ---------- */
+const ICON = {
+  target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>',
+  wave: '<svg viewBox="0 0 24 24"><path d="M3 12c2.5-5 4.5-5 6 0s3.5 5 6 0 4.5-5 6 0"/></svg>',
+  gauge: '<svg viewBox="0 0 24 24"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/></svg>',
+};
+function stats() {
+  const r = rule => DATA.rules.find(x => x.rule === rule && x.model === "xgboost");
+  const sd = r("squat_depth"), fl = r("movement_fluidity"), o = DATA.overall;
+  const tiles = [
+    [ICON.target, fmt(sd.auc, 2), "", t("st_sd"), t("st_sd_p", {tp: sd.tp, n: sd.n_errors})],
+    [ICON.wave, fmt(fl.auc, 2), "", t("st_fl"), t("st_fl_p", {n: fl.n_sets})],
+    [ICON.gauge, fmt(o.mae, 2), t("pts"), t("st_mae"), t("st_mae_p", {base: fmt(o.base, 2)})],
+  ];
+  $("stats").innerHTML = tiles.map(([ic, v, u, lab, p]) =>
+    `<div class="bigstat"><span class="bs-top"><span class="bs-ico">${ic}</span><span class="bs-num">${v}${u ? `<small>${u}</small>` : ""}</span></span><span class="bs-lab">${lab}</span><p>${p}</p></div>`).join("");
+}
+
+/* ---------- session ---------- */
+const exSel = $("ex"), whoSel = $("who"), curveSel = $("curve"), speedSel = $("speed"), playBtn = $("play");
+const ORDER = ["Standard squat", "Wide squat", "Jump squats", "Lunge (left leg forward)", "Lunge (right leg forward)",
+  "Push-ups", "Triceps push-ups", "Burpees", "Squat hold", "Wide squat hold", "Lunge hold (left leg)", "Lunge hold (right leg)",
+  "Extended arm plank hold", "Forearm plank hold", "Side plank hold", "Side plank hold (R side)", "Bridging hold", "Superman hold"];
+const EXS = ORDER.filter(e => DATA.sets[e] && DATA.live[e]);
+EXS.forEach(e => exSel.add(new Option(e, e)));
+const WINDOW_S = 12, WIN_BINS = 10, FLAG_FRAC = 0.5, BAR_FLAG = 30;
+let S = null, raf = null, step = 0;
+const lang = () => $("lang").value;
+const mode = () => DATA.sets[exSel.value].mode;
+const traineeName = () => $("name").value.trim() || t("default_name");
+
+function speak(text) {
+  if (!$("speak").checked || !("speechSynthesis" in window) || !text) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, ""));
+  u.lang = VOICE[lang()];
+  const v = speechSynthesis.getVoices().find(x => x.lang.toLowerCase().startsWith(VOICE[lang()].slice(0, 2)));
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+function buildCards() {
+  $("cards").innerHTML = "";
+  EXS.forEach(ex => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "skill"; b.dataset.ex = ex;
+    b.classList.toggle("on", ex === exSel.value);
+    const n = Object.keys(DATA.live[ex]).length;
+    b.innerHTML = `<svg viewBox="0 0 260 200" aria-hidden="true"></svg><b>${exName(ex)}</b><span>${DATA.sets[ex].mode === "hold" ? t("hold") : t("reps")} · ${t("n_people", {n})}</span>`;
+    const spec = FIG[ex];
+    if (spec) drawFigure(b.querySelector("svg"), spec, stillPose(spec));
+    b.addEventListener("click", () => selectExercise(ex));
+    $("cards").appendChild(b);
+  });
+  $("card-note").textContent = t("n_skills", {n: EXS.length});
+}
+function selectExercise(ex) {
+  exSel.value = ex;
+  document.querySelectorAll(".skill").forEach(c => c.classList.toggle("on", c.dataset.ex === ex));
+  fillPeople();
+  renderTraineeCard();
+}
+function fillPeople(keep) {
+  const subs = DATA.sets[exSel.value].subjects, live = DATA.live[exSel.value];
+  whoSel.innerHTML = "";
+  Object.keys(subs).filter(s => live[s]).sort((a, b) => a - b).forEach(s => {
+    const d = subs[s];
+    whoSel.add(new Option(t("who_opt", {s, o: d.overall, x: d.is_expert ? t("who_x") : ""}), s));
+  });
+  if (keep && [...whoSel.options].some(o => o.value === keep)) whoSel.value = keep;
+}
+function fillCurves(prefer) {
+  const set = DATA.sets[exSel.value], L = DATA.live[exSel.value][whoSel.value], d = set.subjects[whoSel.value];
+  curveSel.innerHTML = "";
+  set.curves.forEach((c, ci) => {
+    if (L.curves[c] && d.mean[ci] && d.mean[ci].every(v => v != null)) curveSel.add(new Option(curveName(c), c));
+  });
+  if (prefer && [...curveSel.options].some(o => o.value === prefer)) curveSel.value = prefer;
+}
+function renderTraineeCard() {
+  const ex = exSel.value, d = whoSel.value && DATA.sets[ex].subjects[whoSel.value];
+  $("tc-name").textContent = traineeName();
+  $("tc-sub").textContent = exName(ex);
+  $("tc-chips").innerHTML = d ? `<span class="ex">${t("person", {s: whoSel.value})}</span><span>${t("physio_of", {o: d.overall})}</span>${d.is_expert ? `<span>${t("expert_set")}</span>` : ""}` : "";
+  const spec = FIG[ex];
+  if (spec) drawFigure($("tc-fig"), spec, stillPose(spec)); else $("tc-fig").innerHTML = "";
+}
+
+function renderStepper() {
+  const names = t("steps");
+  $("stepper").innerHTML = names.map((s, i) => {
+    const cls = i === step ? "on" : i < step ? "done" : "";
+    const inner = i < step ? "✓" : i === step ? t("now") : String(i + 1).padStart(2, "0");
+    return `<button type="button" class="${cls}" data-go="${i}" ${i > step ? "disabled" : ""} aria-current="${i === step ? "step" : "false"}"><span class="sk"><b>${t("step")} ${i + 1}</b>${s}</span><span class="bar">${inner}</span></button>`;
+  }).join("");
+}
+function go(k) {
+  if (k !== 3) stop();
+  if (k > 0 && !whoSel.value) return;
+  step = k;
+  document.querySelectorAll(".step").forEach(s => { s.hidden = +s.dataset.step !== k; });
+  renderStepper();
+  if (k !== 2) cancelAnimationFrame(figRaf);
+  const ex = exSel.value, L = lang(), name = traineeName();
+  if (k === 0) renderTraineeCard();
+  if (k === 1) {
+    const g = fill(LINES.greet[L], {name, ex: L === "ja" ? EX_JA[ex] || ex : ex});
+    $("greet").textContent = g;
+    $("greet-en").textContent = L === "en" ? "" : fill(LINES.greet.en, {name, ex});
+    $("history").innerHTML = (EX_HISTORY[ex] || []).flatMap(f => HISTORY[f]).map(p => `<p>${p}</p>`).join("");
+    renderWelcome(ex);
+    speak(g + (L === "en" ? " " + (EX_HISTORY[ex] || []).flatMap(f => HISTORY[f]).join(" ") : ""));
+  }
+  if (k === 2) {
+    $("say-learn").textContent = LINES.learn[L];
+    animateFigure(ex);
+    const rules = DATA.catalog[ex] || [];
+    const order = {yes: 0, partial: 1, no: 2}, tags = t("obs_tag");
+    const icon = {yes: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+      partial: '<svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg>', no: '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.2"/><path d="M5.5 19c1.2-3.2 3.6-4.6 6.5-4.6s5.3 1.4 6.5 4.6"/></svg>'};
+    $("checklist").innerHTML = rules.slice().sort((a, b) => order[a[1]] - order[b[1]]).map(([r, o]) => {
+      const cls = OBS_CLS[o] || "no";
+      return `<li><span class="ck">${icon[cls]}</span><span>${ruleDesc(r)}</span><span class="tag ${cls}">${tags[cls]}</span></li>`;
+    }).join("");
+    $("check-count").textContent = `${rules.filter(r => r[1] === "yes").length}/${rules.length}`;
+    speak(LINES.learn[L]);
+  }
+  if (k === 3) {
+    $("say-check").textContent = LINES.check[L];
+    speak(LINES.check[L]);
+    setTimeout(play, 400);
+  }
+  if (k === 4) {
+    if (!S) prepare();
+    drawVerdict(S.d, true);
+    drawWorst();
+    const d = S.d, cues = d.cues.length ? d.cues : (mode() === "hold" && S.events.length >= 3 ? [{text: DATA.holdCue.text}] : []);
+    $("say-improve").textContent = cues.length ? LINES.improve[L] : LINES.good[L];
+    speak(cues.length ? cues.map(c => c.text[L]).join(" ") : LINES.good[L]);
+  }
+  if (k !== 1) clearInterval(mediaTimer);
+  const top = $("tab-session").getBoundingClientRect().top;
+  if (top < 0) $("tab-session").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"});
+}
+
+/* ---------- welcome: credited media and the skill guide ---------- */
+const IS_LOCAL = ["localhost", "127.0.0.1"].includes(location.hostname);
+let mediaTimer = null;
+const escH = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+function renderWelcome(ex) {
+  clearInterval(mediaTimer);
+  const sk = DATA.skills[DATA.skillOf[ex]], all = sk.media, items = all.filter(m => !m.local_only || IS_LOCAL);
+  const hiddenLocal = all.length - items.length;
+  const box = $("media");
+  if (!items.length) { box.innerHTML = `<p class="quiet">${t("no_media")}</p>`; }
+  else {
+    box.innerHTML = `<div class="stage" id="stage"></div><div class="thumbs" id="thumbs"></div><figcaption class="credit" id="credit"></figcaption>`;
+    $("thumbs").innerHTML = items.map((m, i) => `<button type="button" data-i="${i}" aria-label="${escH(m.title)}">${
+      m.kind === "video" ? t("video") : `<img src="${m.src}" alt="">`}</button>`).join("");
+    const show = i => {
+      const m = items[i];
+      $("stage").innerHTML = m.kind === "video"
+        ? `<video src="${m.src}" controls muted loop playsinline autoplay></video>`
+        : `<img src="${m.src}" alt="${escH(m.title)}">`;
+      $("thumbs").querySelectorAll("button").forEach((b, j) => b.classList.toggle("on", j === i));
+      $("credit").innerHTML = `${escH(m.title)} · ${escH(m.author)} · <a href="${escH(m.source)}" target="_blank" rel="noopener">${escH(m.license)}</a>, Wikimedia Commons`
+        + (sk.with_weight && m.kind === "image" ? t("with_weight") : "")
+        + (hiddenLocal ? t("more_videos", {n: hiddenLocal}) : "");
+    };
+    $("thumbs").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { clearInterval(mediaTimer); show(+b.dataset.i); }));
+    const images = items.map((m, i) => m.kind === "image" ? i : -1).filter(i => i >= 0);
+    const firstVideo = items.findIndex(m => m.kind === "video");
+    show(firstVideo >= 0 ? firstVideo : images[0]);
+    if (firstVideo < 0 && images.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      let k = 0;                               // step through the start / end positions like a flip-book
+      mediaTimer = setInterval(() => { k = (k + 1) % images.length; show(images[k]); }, 1400);
+    }
+  }
+  const g = sk.guide, li = a => a.map(x => `<li>${escH(x)}</li>`).join("");
+  $("guide").innerHTML = `
+    <div class="g"><span class="label">${t("g_how")}</span><p>${escH(g.summary)}</p><ol>${li(g.steps)}</ol></div>
+    <div class="g"><span class="label">${t("g_muscles")}</span><div class="chips">${g.muscles.map(m => `<span class="chip">${escH(m)}</span>`).join("")}</div>
+      <span class="label" style="margin-top:8px">${t("g_mistakes")}</span><ul>${li(g.mistakes)}</ul></div>
+    <div class="g"><span class="label">${t("g_safety")}</span><ul>${li(g.safety)}</ul>
+      <span class="label" style="margin-top:8px">${t("g_easier")}</span><p>${escH(g.easier)}</p>
+      <span class="label">${t("g_harder")}</span><p>${escH(g.harder)}</p>
+      <p class="credit">${t("g_more", {url: escH(sk.wiki.url), title: escH(sk.wiki.title)})} ${t("en_only")}</p></div>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-go]");
+  if (!b || b.disabled) return;
+  const k = +b.dataset.go;
+  if (k === 3 || k === 4) { fillCurves(curveSel.value); prepare(); }
+  go(k);
+});
+
+/* ---------- replay engine ---------- */
+function prepare() {
+  const ex = exSel.value, s = whoSel.value;
+  if (!curveSel.options.length || ![...curveSel.options].some(o => o.value === curveSel.value)) fillCurves(curveSel.value);
+  const c = curveSel.value, md = mode();
+  const set = DATA.sets[ex], d = set.subjects[s], L = DATA.live[ex][s], ci = set.curves.indexOf(c);
+  const m = d.mean[ci], sd = d.sd[ci], x = L.curves[c], fs = L.fs, n = x.length;
+  const at = (arr, p) => {
+    const j = Math.min(arr.length - 1.0001, Math.max(0, p / 100 * (arr.length - 1))), k = Math.floor(j);
+    return arr[k] + (arr[k + 1] - arr[k]) * (j - k);
+  };
+  const mu = new Array(n).fill(null), lo = new Array(n).fill(null), hi = new Array(n).fill(null);
+  const z = new Array(n).fill(null), out = new Array(n).fill(false);
+  for (let i = 0; i < n; i++) {
+    const p = L.phase[i];
+    if (L.rep[i] < 0 || p == null || x[i] == null) continue;
+    const mm = at(m, p), ss = at(sd, p);
+    mu[i] = mm; lo[i] = md === "hold" ? Math.max(0, mm - 2 * ss) : mm - 2 * ss; hi[i] = mm + 2 * ss;
+    z[i] = (x[i] - mm) / ss;
+    out[i] = md === "hold" ? z[i] > 2 : Math.abs(z[i]) > 2;      // holds: only more movement is a fault
+  }
+  const reps = [];
+  let cur = null;
+  for (let i = 0; i < n; i++) {
+    const r = L.rep[i];
+    if (r < 0) { cur = null; continue; }
+    if (!cur || cur.id !== r) { cur = {id: r, start: i, end: i, idx: []}; reps.push(cur); }
+    cur.end = i; cur.idx.push(i);
+  }
+  const inBin = (i, w) => L.phase[i] >= w * 10 && L.phase[i] < (w + 1) * 10 + (w === WIN_BINS - 1 ? 1 : 0);
+  const events = [];
+  reps.forEach((rp, k) => {
+    for (let w = 0; w < WIN_BINS; w++) {
+      const idx = rp.idx.filter(i => mu[i] != null && inBin(i, w));
+      if (idx.length < 2) continue;
+      const frac = idx.filter(i => out[i]).length / idx.length;
+      if (frac < FLAG_FRAC) continue;
+      const delta = idx.reduce((a, i) => a + x[i] - mu[i], 0) / idx.length;
+      const sdw = idx.reduce((a, i) => a + (hi[i] - mu[i]) / 2, 0) / idx.length;   // experts' spread here
+      events.push({t: idx[idx.length - 1] / fs, rep: k + 1, w, frac, delta, sdw});
+    }
+  });
+  const units = md === "hold"
+    ? Array.from({length: WIN_BINS}, (_, w) => ({label: `${w * 10}`, idx: reps.length ? reps[0].idx.filter(i => inBin(i, w)) : []}))
+    : reps.map((r, k) => ({label: `${k + 1}`, idx: r.idx}));
+  const vals = [...x, ...lo, ...hi, ...m.map((v, i) => v - 2 * sd[i]), ...m.map((v, i) => v + 2 * sd[i])]
+    .filter(v => v != null).map(v => md === "hold" ? Math.max(0, v) : v);
+  const vmin = Math.min(...vals), vmax = Math.max(...vals), yt = nice(vmin, vmax, 4), st = yt[1] - yt[0];
+  while (yt[0] > vmin) yt.unshift(+(yt[0] - st).toFixed(6));
+  while (yt[yt.length - 1] < vmax) yt.push(+(yt[yt.length - 1] + st).toFixed(6));
+  S = {c, d, md, fs, n, x, phase: L.phase, mu, lo, hi, z, out, reps, units, events, m, sd, feedCount: -1,
+       T: (n - 1) / fs, yTicks: yt};
+}
+
+const fmtDelta = v => CURVE[S.c][1] === "°" ? `${Math.abs(v).toFixed(0)}°` : `${Math.abs(v).toFixed(2)}${curveUnit(S.c)}`;
+const lastRepBefore = i => { let k = -1; S.reps.forEach((r, j) => { if (r.start <= i) k = j; }); return k; };
+/* Plain-language coaching for a flagged moment: what the trainee should do, by exercise group,
+   body signal, direction (less / more than the experts) and stage of the movement.
+   These are interpretations of the sensor readings; have a trainer review them. */
+const GROUP = {squat: "squat", wide_squat: "squat", jump_squat: "squat", lunge: "lunge",
+  pushup: "push", triceps_pushup: "push", burpee: "burpee"};
+const STAGES = {squat: ["going down", "at the bottom", "coming up"], lunge: ["going down", "at the bottom", "coming up"],
+  push: ["lowering", "at the bottom", "pushing up"], burpee: ["early in the burpee", "in the middle of the burpee", "late in the burpee"]};
+const STAGES_JA = {squat: ["下がるとき", "いちばん下", "上がるとき"], lunge: ["下がるとき", "いちばん下", "上がるとき"],
+  push: ["下ろすとき", "いちばん下", "押し上げるとき"], burpee: ["バーピー前半", "バーピー中盤", "バーピー後半"]};
+const PLAIN = {
+  squat: {
+    knee: {less: "Bend your knees more and sit lower, so your thighs get closer to level with your knees.",
+      more: "You bend your knees more than the experts. Push your hips back instead of only pushing the knees forward."},
+    thigh: {less: "Lower your hips further. Your thighs are not reaching the experts' depth.",
+      more: "Your hips drop lower or your body tips further forward than the experts'. Keep your chest up and control the depth."},
+    shank: {less: "Let your knees travel forward a little over your toes so you can sink deeper, keeping your heels down.",
+      more: "Your knees push far forward over your toes. Sit your hips back more and keep your weight over the middle of your feet."},
+    uarm: {less: "Raise your arms in front of you to about shoulder height. It helps you balance and keep your chest up.",
+      more: "Keep your shoulders down and your arms steady at shoulder height. Don't lift or swing them higher."},
+    env_rectus: {less: "Push up harder through your legs. Your front-thigh muscles work less than the experts' here.",
+      more: "Your front-thigh muscles work harder than the experts'. Slow down and share the work with your hips by sitting back."},
+    env_gastroc: {less: "Press your whole foot into the floor and drive up through your heels and mid-foot.",
+      more: "Your calves work harder than the experts'. You may be rising onto your toes, so keep your heels down."},
+  },
+  lunge: {
+    knee: {less: "Bend both knees more and lower your back knee towards the floor.",
+      more: "You bend deeper than the experts. Lower only until the back knee is just above the floor, under control."},
+    thigh: {less: "Take a slightly longer step and lower your hips straight down so the front thigh gets closer to level.",
+      more: "Your thigh moves further than the experts'. Keep your body upright and lower straight down, not forward."},
+    shank: {less: "Let your front knee bend forward a little more, keeping it over the ankle.",
+      more: "Your front knee travels too far forward. Take a longer step and keep the knee over the ankle."},
+    uarm: {less: "Keep your arms still, hands on your hips or by your sides, so your balance comes from your legs.",
+      more: "Keep your shoulders down and your arms still. Don't swing them to keep your balance."},
+    env_rectus: {less: "Push back up harder through your front leg.",
+      more: "Your front thigh works very hard. Slow the movement down and use your hips more."},
+    env_gastroc: {less: "Keep the front heel down and push through the whole foot.",
+      more: "Your calf works harder than the experts'. Keep the front heel on the floor."},
+  },
+  push: {
+    uarm: {less: ["Lower your chest further. Bend your elbows more until your chest reaches elbow height.",
+                  "Lower your chest further. Bend your elbows more until your chest reaches elbow height.",
+                  "Push all the way up smoothly until your arms are straight."],
+      more: ["Keep your shoulders down, away from your ears, and your elbows at about 45° from your body.",
+             "Don't sink too low or let your shoulders roll forward. Stop when your chest reaches elbow height, shoulders down.",
+             "Straighten your arms fully at the top and keep your shoulders down."]},
+    thigh: {less: "Keep your body in one straight line. Squeeze your buttocks so your hips don't sag or lift.",
+      more: "Keep your body in one straight line. Squeeze your buttocks so your hips don't sag or lift."},
+    env_triceps: {less: "Push the floor away harder with the back of your arms.",
+      more: "Your arms work very hard. Keep your whole body tight so the effort is shared, and slow down."},
+    env_biceps: {less: "Keep your arms engaged and the lowering under control.",
+      more: "Relax the front of your arms. Push with your chest and the back of your arms."},
+  },
+  burpee: {
+    knee: {less: "Squat lower when you go down and when you land.", more: "Control the squat. Don't drop lower than you need to."},
+    thigh: {less: "Bring your hips lower in the squat parts of the burpee.", more: "Keep your hips in line in the plank. Don't let them sag."},
+    uarm: {less: "Reach fully overhead in the jump and place your hands firmly under your shoulders.",
+      more: "Keep your shoulders down and your hands under your shoulders in the plank."},
+    env_rectus: {less: "Drive harder with your legs in the jump.", more: "Slow down a little. Your thighs work harder than the experts'."},
+    env_triceps: {less: "Keep your arms strong in the plank.", more: "Your arms work very hard. Keep your body tight in the plank."},
+  },
+  hold: {
+    hold_thigh: "Your thigh is shifting. Keep your hips still: brace your stomach and squeeze your buttocks.",
+    hold_shank: "Your lower leg is wobbling. Press your feet firmly into the floor and keep your knee still.",
+    hold_uarm: "Your arm and shoulder are moving. Keep the shoulder stacked over the elbow or hand, push the floor away and keep your shoulder down.",
+  },
+};
+const PLAIN_JA = {
+  squat: {
+    knee: {less: "膝をもっと曲げて腰を低く。太ももが膝と水平に近づくまで下ろしましょう。",
+      more: "熟練者より膝を曲げすぎています。膝を前に出すだけでなく、お尻を後ろに引きましょう。"},
+    thigh: {less: "腰をもっと下ろしましょう。太ももが熟練者の深さに届いていません。",
+      more: "熟練者より腰が下がりすぎるか、上体が前に傾いています。胸を張って深さをコントロールしましょう。"},
+    shank: {less: "かかとを床につけたまま、膝を少しつま先の上まで前に出すと、より深く沈めます。",
+      more: "膝がつま先より大きく前に出ています。お尻をもっと後ろに引き、体重を足の中央に乗せましょう。"},
+    uarm: {less: "腕を前に肩の高さまで上げましょう。バランスが取りやすく、胸も張りやすくなります。",
+      more: "肩を下げ、腕は肩の高さで安定させましょう。それ以上上げたり振ったりしないように。"},
+    env_rectus: {less: "脚でもっと力強く押し上げましょう。ここでは太もも前面の筋肉の働きが熟練者より弱いです。",
+      more: "太もも前面の筋肉が熟練者より強く働いています。ゆっくり動き、お尻を後ろに引いて股関節にも負荷を分けましょう。"},
+    env_gastroc: {less: "足裏全体で床を押し、かかとと足の中央で押し上げましょう。",
+      more: "ふくらはぎが熟練者より強く働いています。つま先立ちになっているかもしれません。かかとを床につけましょう。"},
+  },
+  lunge: {
+    knee: {less: "両膝をもっと曲げ、後ろの膝を床に近づけましょう。",
+      more: "熟練者より深く沈んでいます。後ろの膝が床のすぐ上に来るまで、コントロールして下ろしましょう。"},
+    thigh: {less: "少し歩幅を広げ、腰をまっすぐ下ろして、前の太ももを水平に近づけましょう。",
+      more: "太ももの動きが熟練者より大きいです。上体を起こしたまま、前ではなく真下に下ろしましょう。"},
+    shank: {less: "前の膝を足首の真上に保ちながら、もう少し前に曲げましょう。",
+      more: "前の膝が前に出すぎています。歩幅を広げ、膝を足首の真上に保ちましょう。"},
+    uarm: {less: "腕は腰に当てるか体の横に置いて動かさず、脚でバランスを取りましょう。",
+      more: "肩を下げ、腕は動かさないように。バランスを取るために腕を振らないでください。"},
+    env_rectus: {less: "前脚でもっと力強く押し戻しましょう。",
+      more: "前の太ももがとても強く働いています。動きをゆっくりにして、股関節をもっと使いましょう。"},
+    env_gastroc: {less: "前のかかとを床につけたまま、足裏全体で押しましょう。",
+      more: "ふくらはぎが熟練者より強く働いています。前のかかとを床につけましょう。"},
+  },
+  push: {
+    uarm: {less: ["胸をもっと下ろしましょう。胸がひじの高さに来るまでひじを曲げます。",
+                  "胸をもっと下ろしましょう。胸がひじの高さに来るまでひじを曲げます。",
+                  "腕がまっすぐになるまで、なめらかに押し上げましょう。"],
+      more: ["肩を耳から離して下げ、ひじは体から約45°に保ちましょう。",
+             "下がりすぎたり肩が前に巻いたりしないように。胸がひじの高さに来たら止め、肩は下げたままに。",
+             "上で腕をしっかり伸ばし、肩は下げたままにしましょう。"]},
+    thigh: {less: "体を一直線に保ちましょう。お尻を締めて、腰が落ちたり上がったりしないように。",
+      more: "体を一直線に保ちましょう。お尻を締めて、腰が落ちたり上がったりしないように。"},
+    env_triceps: {less: "腕の裏側で床をもっと強く押しましょう。",
+      more: "腕がとても強く働いています。全身を固めて負荷を分け、ゆっくり動きましょう。"},
+    env_biceps: {less: "腕に力を入れたまま、下ろす動きをコントロールしましょう。",
+      more: "腕の前側の力を抜き、胸と腕の裏側で押しましょう。"},
+  },
+  burpee: {
+    knee: {less: "下がるときと着地のときに、もっと低くしゃがみましょう。", more: "スクワットをコントロールし、必要以上に低くならないように。"},
+    thigh: {less: "バーピーのスクワット部分で腰をもっと低く。", more: "プランクでは腰を一直線に保ち、落とさないように。"},
+    uarm: {less: "ジャンプでは腕を真上までしっかり伸ばし、手は肩の真下にしっかり置きましょう。",
+      more: "プランクでは肩を下げ、手は肩の真下に置きましょう。"},
+    env_rectus: {less: "ジャンプでもっと脚で力強く踏み切りましょう。", more: "少しペースを落としましょう。太ももが熟練者より強く働いています。"},
+    env_triceps: {less: "プランクでは腕をしっかり支えましょう。", more: "腕がとても強く働いています。プランクで体を固めましょう。"},
+  },
+  hold: {
+    hold_thigh: "太ももがずれています。お腹を固めてお尻を締め、腰を動かさないように。",
+    hold_shank: "すねがぐらついています。足で床をしっかり押し、膝を動かさないように。",
+    hold_uarm: "腕と肩が動いています。肩をひじ（または手）の真上に保ち、床を押して肩を下げましょう。",
+  },
+};
+const triceps = () => DATA.skillOf[exSel.value] === "triceps_pushup";
+function plainCue(e) {
+  const PL = J() ? PLAIN_JA : PLAIN;
+  if (S.md === "hold") return PL.hold[S.c] || t("cue_hold_generic");
+  const g = GROUP[DATA.skillOf[exSel.value]], dir = e.delta < 0 ? "less" : "more";
+  const stage = e.w < 3 ? 0 : e.w < 7 ? 1 : 2;
+  let txt = ((PL[g] || {})[S.c] || {})[dir];
+  if (Array.isArray(txt)) txt = txt[stage];
+  if (txt && g === "push" && triceps()) txt = txt.replace("at about 45° from your body", "close to your ribs").replace("体から約45°に", "脇腹に近づけて");
+  return txt || t("cue_generic", {c: curveLow(S.c), dir: dir === "less" ? t("lower") : t("higher")});
+}
+function stageName(e) {
+  const a = e.w * 10, b = a + 10;
+  if (S.md === "hold") return t("stage_hold", {a, b});
+  const g = GROUP[DATA.skillOf[exSel.value]], st = ((J() ? STAGES_JA : STAGES)[g] || (J() ? STAGES_JA : STAGES).squat)[e.w < 3 ? 0 : e.w < 7 ? 1 : 2];
+  return t("stage_rep", {r: e.rep, st, a, b});
+}
+const strength = e => { const r = Math.abs(e.delta) / Math.max(e.sdw || 1e-9, 1e-9); return r > 3 ? t("str_lot") : r > 2 ? t("str_clear") : t("str_slight"); };
+const eventText = e => `<b>${stageName(e)}</b><span class="main">${plainCue(e)}</span>`
+  + `<span class="why">${t("measured", {c: curveLow(S.c), d: fmtDelta(e.delta), dir: S.md === "hold" ? t("dir_more") : e.delta < 0 ? t("dir_below") : t("dir_above"), s: strength(e), p: Math.round(e.frac * 100)})}</span>`;
+
+function drawStream(iNow) {
+  const svg = $("stream");
+  svg.innerHTML = "";
+  const W = 900, L = 56, R = 16, top = 26, bot1 = 196, top2 = 236, bot2 = 296;
+  const tt = i => i / S.fs, tNow = tt(iNow), span = Math.min(WINDOW_S, S.T);
+  const x0 = Math.max(0, tNow - span), x1 = x0 + span;
+  const sx = lin(x0, x1, L, W - R), yt = S.yTicks, sy = lin(yt[0], yt[yt.length - 1], bot1, top);
+  const sz = lin(0, 5, bot2, top2);
+  axisY(el("g", {}, svg), yt, sy, L, W - R, `${curveName(S.c)} (${curveUnit(S.c)})`);
+  const i0 = Math.max(0, Math.floor(x0 * S.fs));
+  let runStart = null;
+  for (let i = i0; i <= iNow + 1; i++) {
+    const o = i <= iNow && S.out[i];
+    if (o && runStart === null) runStart = i;
+    if (!o && runStart !== null) {
+      el("rect", {x: sx(tt(runStart)), y: top, width: Math.max(2, sx(tt(i - 1)) - sx(tt(runStart))), height: bot2 - top,
+        style: "fill:var(--bad);opacity:.09"}, svg);
+      runStart = null;
+    }
+  }
+  S.reps.forEach((rp, j) => {
+    const idx = rp.idx.filter(i => i >= i0 && i <= iNow && S.mu[i] != null);
+    if (idx.length < 2) return;
+    const up = idx.map(i => `${sx(tt(i)).toFixed(1)},${sy(S.hi[i]).toFixed(1)}`);
+    const dn = idx.slice().reverse().map(i => `${sx(tt(i)).toFixed(1)},${sy(S.lo[i]).toFixed(1)}`);
+    el("path", {d: "M" + up.join("L") + "L" + dn.join("L") + "Z", style: "fill:var(--expert-band)"}, svg);
+    el("path", {d: "M" + idx.map(i => `${sx(tt(i)).toFixed(1)},${sy(S.mu[i]).toFixed(1)}`).join("L"), fill: "none",
+      style: "stroke:var(--expert);stroke-width:1.5"}, svg);
+    if (S.md === "reps" && rp.start >= i0) {
+      el("line", {x1: sx(tt(rp.start)), x2: sx(tt(rp.start)), y1: top, y2: bot2, style: "stroke:var(--muted);stroke-dasharray:3 4"}, svg);
+      el("text", {x: sx(tt(rp.start)) + 4, y: top + 10, style: "font-size:11px"}, svg).textContent = t("rep_n", {n: j + 1});
+    }
+  });
+  const xs = [], ys = [], yo = [], zs = [], zo = [];
+  for (let i = i0; i <= iNow; i++) {
+    xs.push(tt(i)); ys.push(S.x[i]); yo.push(S.out[i] ? S.x[i] : null);
+    const a = S.z[i] == null ? null : Math.min(5, S.md === "hold" ? Math.max(0, S.z[i]) : Math.abs(S.z[i]));
+    zs.push(a); zo.push(a != null && a > 2 ? a : null);
+  }
+  el("path", {d: pathOf(xs, ys, sx, sy), fill: "none", style: "stroke:var(--trainee);stroke-width:2.2"}, svg);
+  el("path", {d: pathOf(xs, yo, sx, sy), fill: "none", style: "stroke:var(--bad);stroke-width:4;stroke-linecap:round"}, svg);
+  [0, 2, 4].forEach(v => {
+    el("line", {x1: L, x2: W - R, y1: sz(v), y2: sz(v), style: `stroke:var(--rule)${v === 2 ? ";stroke-dasharray:4 4;stroke:var(--muted)" : ""}`}, svg);
+    el("text", {x: L - 8, y: sz(v) + 4, "text-anchor": "end"}, svg).textContent = v;
+  });
+  el("text", {x: L, y: top2 - 8, class: "title"}, svg).textContent = t("stream_z");
+  el("path", {d: pathOf(xs, zs, sx, sz), fill: "none", style: "stroke:var(--muted);stroke-width:1.5"}, svg);
+  el("path", {d: pathOf(xs, zo, sx, sz), fill: "none", style: "stroke:var(--bad);stroke-width:2.5"}, svg);
+  nice(x0, x1, 6).forEach(v => el("text", {x: sx(v), y: bot2 + 18, "text-anchor": "middle"}, svg).textContent = v + t("sec"));
+  el("line", {x1: sx(tNow), x2: sx(tNow), y1: top, y2: bot2, style: "stroke:var(--ink);stroke-width:1"}, svg);
+  if (S.x[iNow] != null)
+    el("circle", {cx: sx(tNow), cy: sy(S.x[iNow]), r: 5.5, style: `fill:${S.out[iNow] ? "var(--bad)" : "var(--trainee)"};stroke:var(--surface-solid);stroke-width:2`}, svg);
+}
+
+function drawPhase(iNow) {
+  const svg = $("phasechart");
+  svg.innerHTML = "";
+  const W = 440, L = 46, R = 12, top = 34, bot = 244, yt = S.yTicks;
+  const sx = lin(0, 100, L, W - R), sy = lin(yt[0], yt[yt.length - 1], bot, top);
+  axisY(el("g", {}, svg), yt, sy, L, W - R, "");
+  const ps = S.m.map((_, i) => i * 100 / (S.m.length - 1));
+  const loB = i => S.md === "hold" ? Math.max(0, S.m[i] - 2 * S.sd[i]) : S.m[i] - 2 * S.sd[i];
+  const up = ps.map((p, i) => `${sx(p).toFixed(1)},${sy(S.m[i] + 2 * S.sd[i]).toFixed(1)}`);
+  const dn = ps.slice().reverse().map((p, j) => `${sx(p).toFixed(1)},${sy(loB(ps.length - 1 - j)).toFixed(1)}`);
+  el("path", {d: "M" + up.join("L") + "L" + dn.join("L") + "Z", style: "fill:var(--expert-band)"}, svg);
+  el("path", {d: pathOf(ps, S.m, sx, sy), fill: "none", style: "stroke:var(--expert);stroke-width:2"}, svg);
+  const k = lastRepBefore(iNow);
+  S.reps.forEach((rp, j) => {
+    if (j > k) return;
+    const idx = rp.idx.filter(i => i <= iNow && S.mu[i] != null);
+    const path = pathOf(idx.map(i => S.phase[i]), idx.map(i => S.x[i]), sx, sy);
+    if (j < k) { el("path", {d: path, fill: "none", style: "stroke:var(--trainee);stroke-width:1;opacity:.3"}, svg); return; }
+    el("path", {d: path, fill: "none", style: "stroke:var(--trainee);stroke-width:2.4"}, svg);
+    idx.filter(i => S.out[i]).forEach(i => el("circle", {cx: sx(S.phase[i]), cy: sy(S.x[i]), r: 3.2, style: "fill:var(--bad)"}, svg));
+  });
+  [0, 25, 50, 75, 100].forEach(v => el("text", {x: sx(v), y: bot + 18, "text-anchor": "middle"}, svg).textContent = v + "%");
+  el("text", {x: L, y: 16, class: "title"}, svg).textContent = S.md === "hold" ? t("ph_hold")
+    : (k < 0 ? t("ph_cur") : t("ph_k", {k: k + 1, n: S.reps.length}));
+  el("text", {x: (L + W) / 2, y: bot + 36, "text-anchor": "middle"}, svg).textContent =
+    S.md === "hold" ? t("ph_x_hold") : t("ph_x_rep");
+}
+
+function drawBars(iNow) {
+  const svg = $("repbars");
+  svg.innerHTML = "";
+  const W = 440, L = 46, R = 12, top = 34, bot = 244, n = S.units.length;
+  const sy = lin(0, 100, bot, top), bw = (W - L - R) / Math.max(n, 1);
+  [0, 50, 100].forEach(v => {
+    el("line", {x1: L, x2: W - R, y1: sy(v), y2: sy(v), style: "stroke:var(--rule)"}, svg);
+    el("text", {x: L - 8, y: sy(v) + 4, "text-anchor": "end"}, svg).textContent = v + "%";
+  });
+  el("line", {x1: L, x2: W - R, y1: sy(BAR_FLAG), y2: sy(BAR_FLAG), style: "stroke:var(--bad);stroke-dasharray:4 4;opacity:.7"}, svg);
+  let tot = 0, totOut = 0;
+  S.units.forEach((u, j) => {
+    const idx = u.idx.filter(i => i <= iNow && S.mu[i] != null);
+    if (!idx.length) return;
+    const o = idx.filter(i => S.out[i]).length, pct = 100 * o / idx.length;
+    tot += idx.length; totOut += o;
+    const x = L + j * bw + bw * 0.15, w = bw * 0.7;
+    el("rect", {x, y: sy(pct), width: w, height: Math.max(0.5, bot - sy(pct)), rx: Math.min(6, w / 2),
+      style: `fill:${pct >= BAR_FLAG ? "var(--bad)" : "var(--ink)"};opacity:${pct >= BAR_FLAG ? 1 : .22}`}, svg);
+    if (bw > 18) el("text", {x: x + w / 2, y: sy(pct) - 5, "text-anchor": "middle", style: "font-size:10px"}, svg).textContent = Math.round(pct);
+    if (bw > 14 || j % 2 === 0) el("text", {x: x + w / 2, y: bot + 16, "text-anchor": "middle", style: "font-size:10px"}, svg).textContent = u.label;
+  });
+  el("text", {x: L, y: 16, class: "title"}, svg).textContent = S.md === "hold" ? t("bar_hold") : t("bar_rep");
+  el("text", {x: (L + W) / 2, y: bot + 36, "text-anchor": "middle"}, svg).textContent =
+    t("bar_x", {u: S.md === "hold" ? t("bar_u_hold") : t("bar_u_rep"), f: BAR_FLAG, p: tot ? Math.round(100 * totOut / tot) : 0});
+  return tot ? 100 * totOut / tot : 0;
+}
+
+function drawFeed(now, final) {
+  const shown = S.events.filter(e => e.t <= now);
+  $("feed-count").textContent = t("flagged", {n: shown.length});
+  if (shown.length === S.feedCount) return;
+  S.feedCount = shown.length;
+  $("feed").innerHTML = shown.length ? shown.slice().reverse().map((e, j) =>
+    `<li class="${j === 0 && !final ? "fresh" : ""}">${eventText(e)}</li>`).join("")
+    : `<li class="empty">${final ? t("feed_none_final") : t("feed_none")}</li>`;
+  const fresh = $("feed").querySelector(".fresh");
+  if (fresh) setTimeout(() => fresh.classList.remove("fresh"), 900);
+}
+function drawWorst() {
+  const top3 = S.events.slice().sort((a, b) => Math.abs(b.delta) * b.frac - Math.abs(a.delta) * a.frac).slice(0, 3);
+  $("worst").innerHTML = top3.length ? top3.map(e => `<li>${eventText(e)}</li>`).join("")
+    : `<li class="empty">${t("worst_none", {c: curveLow(S.c)})}</li>`;
+}
+
+function drawStatus(iNow, now, outPct) {
+  const k = S.reps.findIndex(r => r.start <= iNow && iNow <= r.end);
+  const state = S.mu[iNow] == null ? ["idle", S.md === "hold" ? t("st_wait") : t("st_between")]
+    : S.out[iNow] ? ["out", t("st_outside")] : ["in", t("st_inside")];
+  const flagged = S.events.filter(e => e.t <= now).length;
+  const second = S.md === "hold"
+    ? `<div><span class="label">${t("s_hold")}</span><span class="v">${Math.round(S.phase[iNow] || 0)}%</span></div>`
+    : `<div><span class="label">${t("s_rep")}</span><span class="v">${k < 0 ? "–" : k + 1} / ${S.reps.length}</span></div>`;
+  $("status").innerHTML = `
+    <div><span class="label">${t("s_time")}</span><span class="v">${now.toFixed(1)} / ${S.T.toFixed(1)}${t("sec")}</span></div>${second}
+    <div><span class="label">${t("s_now")}</span><span class="pill ${state[0]}">${state[1]}</span></div>
+    <div><span class="label">${t("s_out")}</span><span class="v">${Math.round(outPct)}%</span></div>
+    <div><span class="label">${t("s_flag")}</span><span class="v">${flagged}</span></div>`;
+}
+
+function drawVerdict(d, revealed) {
+  if (!revealed) {
+    $("verdict").innerHTML = `<span class="label">${t("v_verdict")}</span><p class="quiet">${t("v_pending")}</p>`;
+    return;
+  }
+  const L = lang();
+  const chips = Object.entries(d.rules).map(([k, v]) =>
+    `<span class="chip ${v ? "ok" : "err"}">${ruleName(k)}: ${v ? t("ok") : t("error")}</span>`).join("");
+  const probs = Object.entries(d.p).filter(([k]) => ["squat_depth", "movement_fluidity"].includes(k))
+    .map(([k, v]) => `<dt>${ruleName(k)}</dt><dd>${t("v_lik", {p: fmt(v * 100, 0)})}</dd>`).join("");
+  const cueBlock = (c, head) => `<div class="cue"><span class="code">${head}</span>
+      <dl>${Object.entries(c.text).map(([l, tx]) => `<dt>${LANG[l]}</dt><dd lang="${l}" class="${l === L ? "mine" : ""}">${tx}</dd>`).join("")}</dl></div>`;
+  let cues;
+  if (S.md === "hold") {
+    cues = S.events.length >= 3
+      ? cueBlock(DATA.holdCue, t("v_hold_head", {code: DATA.holdCue.code, n: S.events.length}))
+      : `<p class="quiet">${t("v_hold_ok")}</p>`;
+  } else {
+    cues = d.cues.length ? d.cues.map(c => cueBlock(c, t("v_cue_head", {code: c.code, p: fmt(c.probability * 100, 0), a: c.physio_says_error ? t("v_agrees") : t("v_nomark")}))).join("")
+      : `<p class="quiet">${t("v_none")}</p>`;
+  }
+  const model = S.md === "hold"
+    ? `<p class="quiet" style="margin-top:6px">${t("v_hold_model")}</p>`
+    : `<dl class="facts"><dt>${t("v_band")}</dt><dd>${fmt(d.score, 0)} / 100</dd>${probs}</dl>`;
+  $("verdict").innerHTML = `
+    <div><span class="label">${t("v_physio")}</span>
+      <dl class="facts"><dt>${t("v_overall")}</dt><dd>${d.overall} / 10${d.is_expert ? " · " + t("expert_set") : ""}</dd>
+      <dt>${t("v_errors")}</dt><dd>${d.n_errors}</dd></dl>
+      <div class="chips" style="margin-top:10px">${chips}</div></div>
+    <div><span class="label">${t("v_twin")}</span>${model}</div>
+    <div style="display:grid;gap:10px"><span class="label">${t("v_cue")}</span>${cues}</div>`;
+}
+
+function render(now, final) {
+  const iNow = Math.max(0, Math.min(S.n - 1, Math.floor(now * S.fs)));
+  drawStream(iNow);
+  drawPhase(iNow);
+  const outPct = drawBars(iNow);
+  drawFeed(now, final);
+  drawStatus(iNow, now, outPct);
+}
+function stop() {
+  if (raf) cancelAnimationFrame(raf);
+  raf = null;
+  playBtn.textContent = t("play");
+}
+function showFull() { stop(); prepare(); render(S.T, true); }
+function play() {
+  stop(); prepare();
+  let now = 0, last = null;
+  playBtn.textContent = t("stop");
+  const tick = ts => {
+    if (last !== null) now += (ts - last) / 1000 * +speedSel.value;
+    last = ts;
+    if (now >= S.T) { render(S.T, true); stop(); return; }
+    render(now, false);
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+}
+playBtn.addEventListener("click", () => raf ? showFull() : play());
+curveSel.addEventListener("change", () => (raf ? play() : showFull()));
+$("lang").addEventListener("change", () => { if (step > 0) go(step); });
+$("name").addEventListener("input", renderTraineeCard);
+
+buildCards();
+selectExercise("Standard squat");
+const sq = DATA.sets["Standard squat"].subjects;
+const firstCue = Object.keys(sq).find(s => DATA.live["Standard squat"][s] && sq[s].cues.some(c => c.code === "SQUAT_DEPTH_LOW" && c.physio_says_error));
+if (firstCue) whoSel.value = firstCue;
+const ev = firstCue && sq[firstCue].cues[0].evidence;
+fillCurves(ev && ev.segment);
+whoSel.addEventListener("change", () => { fillCurves(curveSel.value); renderTraineeCard(); });
+
+/* ---------- accuracy ---------- */
+function drawAuc() {
+  const svg = $("auc"), tip = tipFor(svg);
+  svg.innerHTML = "";
+  const xg = DATA.rules.filter(r => r.model === "xgboost").sort((a, b) => b.auc - a.auc);
+  const L = 250, R = 20, top = 16, rowH = 40, W = 900;
+  const sx = lin(0.2, 1, L, W - R), H = top + rowH * xg.length;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H + 40}`);
+  [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1].forEach(v => {
+    el("line", {x1: sx(v), x2: sx(v), y1: top, y2: H, style: `stroke:var(--rule)${v === 0.5 ? ";stroke-dasharray:4 4;stroke:var(--muted)" : ""}`}, svg);
+    el("text", {x: sx(v), y: H + 18, "text-anchor": "middle"}, svg).textContent = v.toFixed(1);
+  });
+  el("text", {x: sx(0.5) + 6, y: H + 34}, svg).textContent = t("guessing");
+  xg.forEach((r, i) => {
+    const y = top + i * rowH + rowH / 2, ok = r.auc_lo > 0.5;
+    el("text", {x: L - 14, y: y + 4, "text-anchor": "end", style: `fill:${ok ? "var(--ink)" : "var(--muted)"};font:${ok ? 500 : 400} 13.5px var(--font-body)`}, svg)
+      .textContent = `${ruleName(r.rule)} (${r.n_errors}/${r.n_sets})`;
+    const lr = DATA.rules.find(x => x.rule === r.rule && x.model === "logreg");
+    [[r, "var(--expert)", -6], [lr, "var(--trainee)", 6]].forEach(([q, c, dy]) => {
+      el("line", {x1: sx(q.auc_lo), x2: sx(q.auc_hi), y1: y + dy, y2: y + dy, style: `stroke:${c};stroke-width:2.5;stroke-linecap:round;opacity:.45`}, svg);
+      const dot = el("circle", {cx: sx(q.auc), cy: y + dy, r: 6, style: `fill:${c};stroke:var(--surface-solid);stroke-width:2`}, svg);
+      dot.addEventListener("pointermove", e => tip.show(e, t("auc_tip", {r: ruleName(q.rule), m: q.model, a: fmt(q.auc, 2), lo: fmt(q.auc_lo, 2), hi: fmt(q.auc_hi, 2), b: fmt(q.bal_acc, 2), f: fmt(q.f1, 2)})));
+      dot.addEventListener("pointerleave", () => tip.hide());
+    });
+  });
+}
+
+function drawConfusion() {
+  $("cms").innerHTML = `<h3>${t("cm_title")}</h3>` + ["squat_depth", "movement_fluidity"].map(rule => {
+    const r = DATA.rules.find(x => x.rule === rule && x.model === "xgboost");
+    const cell = (n, rowTot, hit) => `<div class="${hit ? "hit" : ""}"><b>${n}</b>${Math.round(100 * n / rowTot)}%</div>`;
+    return `<div><span class="label">${t("cm_lab", {r: ruleName(rule), b: fmt(r.bal_acc, 2)})}</span>
+      <div class="cm" style="margin-top:8px"><div class="h"></div><div class="h">${t("cm_mok")}</div><div class="h">${t("cm_merr")}</div>
+      <div class="h">${t("cm_pok")}</div>${cell(r.tn, r.tn + r.fp, true)}${cell(r.fp, r.tn + r.fp)}
+      <div class="h">${t("cm_perr")}</div>${cell(r.fn, r.fn + r.tp)}${cell(r.tp, r.fn + r.tp, true)}</div></div>`;
+  }).join("");
+}
+
+function drawOverall() {
+  const svg = $("overall"), tip = tipFor(svg), O = DATA.overall;
+  svg.innerHTML = "";
+  const L = 44, R = 14, top = 34, bot = 296, W = 420;
+  const sx = lin(1.5, 10.5, L, W - R), sy = lin(1.5, 10.5, bot, top);
+  el("text", {x: L, y: 16, class: "title"}, svg).textContent = t("ov_title", {n: O.n, rho: fmt(O.rho, 2)});
+  [2, 4, 6, 8, 10].forEach(v => {
+    el("line", {x1: L, x2: W - R, y1: sy(v), y2: sy(v), style: "stroke:var(--rule)"}, svg);
+    el("text", {x: L - 8, y: sy(v) + 4, "text-anchor": "end"}, svg).textContent = v;
+    el("text", {x: sx(v), y: bot + 18, "text-anchor": "middle"}, svg).textContent = v;
+  });
+  el("line", {x1: sx(1.5), y1: sy(1.5), x2: sx(10.5), y2: sy(10.5), style: "stroke:var(--muted);stroke-dasharray:4 4"}, svg);
+  el("text", {x: (L + W) / 2, y: bot + 36, "text-anchor": "middle"}, svg).textContent = t("ov_x");
+  let seed = 7; const jit = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280 - .5) * .3;
+  O.points.forEach(([a, p, ex, s]) => {
+    const c = el("circle", {cx: sx(a + jit()), cy: sy(p), r: 4.5, style: "fill:var(--expert);opacity:.6;stroke:var(--surface-solid);stroke-width:1"}, svg);
+    c.addEventListener("pointermove", e => tip.show(e, t("ov_tip", {s, ex: exName(ex), a, p: fmt(p, 1)})));
+    c.addEventListener("pointerleave", () => tip.hide());
+  });
+}
+
+function drawShap() {
+  $("shap").innerHTML = ["squat_depth", "pushup_depth", "movement_fluidity"].filter(r => DATA.shap[r]).map(rule => {
+    const rows = DATA.shap[rule], max = Math.max(...rows.map(r => r[1]));
+    return `<div class="shap"><span class="label">${ruleName(rule)}</span>${rows.map(([f, v]) =>
+      `<div class="shap-row"><span>${featName(f)}</span><span class="bar" style="width:${(100 * v / max).toFixed(0)}%"></span><span class="v">${fmt(v, 2)}</span></div>`).join("")}</div>`;
+  }).join("");
+}
+
+function drawObs() {
+  const O = DATA.verify.observability, nm = r => J() ? ruleDesc(r) : r.replace(/_/g, " ");
+  const col = (title, list, cls, note) => `<div><h3>${title} <span class="quiet num">· ${list.length}</span></h3><p class="quiet">${note}</p><div class="chips">${list.map(r => `<span class="chip ${cls}">${nm(r)}</span>`).join("")}</div></div>`;
+  $("obs").innerHTML =
+    col(t("obs_yes"), O.yes, "ok", t("obs_yes_p")) +
+    col(t("obs_partial"), O.partial, "", t("obs_partial_p")) +
+    col(t("obs_no"), O.no, "err", t("obs_no_p"));
+}
+
+/* ---------- verification ---------- */
+const FOLD = {k: 0, people: []};
+function drawFolds() {
+  const ids = [...new Set(DATA.overall.points.map(p => p[3]))].sort((a, b) => a - b);
+  FOLD.people = ids.length >= DATA.verify.n_subjects ? ids : Array.from({length: DATA.verify.n_subjects}, (_, i) => i + 1);
+  $("folds").innerHTML = FOLD.people.map(p => `<span class="fold">${p}</span>`).join("");
+  showFold();
+}
+function showFold() {
+  const n = FOLD.people.length;
+  $("folds").querySelectorAll(".fold").forEach((f, i) => f.classList.toggle("test", i === FOLD.k));
+  $("fold-text").textContent = t("fold_text", {k: FOLD.k + 1, n, m: n - 1, p: FOLD.people[FOLD.k]});
+}
+$("next-fold").addEventListener("click", () => { FOLD.k = (FOLD.k + 1) % FOLD.people.length; showFold(); });
+
+function drawPerm() {
+  const P = DATA.verify.perm;
+  $("perm").innerHTML = "";
+  ["squat_depth", "movement_fluidity", "pushup_depth"].filter(r => P[r]).forEach(rule => {
+    const {null: nul, real_auc: real, p} = P[rule];
+    const wrap = document.createElement("div");
+    wrap.className = "panel";
+    const svg = el("svg", {class: "chart", viewBox: "0 0 360 210", role: "img", "aria-label": `${ruleName(rule)} shuffled-label test`});
+    wrap.appendChild(svg);
+    $("perm").appendChild(wrap);
+    const bins = Array.from({length: 20}, (_, i) => 0.2 + i * 0.04);
+    const counts = bins.map(b => nul.filter(v => v >= b && v < b + 0.04).length);
+    const L = 30, R = 10, top = 34, bot = 170, sx = lin(0.2, 1, L, 360 - R), sy = lin(0, Math.max(...counts) * 1.15, bot, top);
+    el("text", {x: L, y: 16, class: "title"}, svg).textContent = ruleName(rule);
+    el("text", {x: L, y: 30}, svg).textContent = t("perm_p", {p: fmt(p, 3), n: nul.length});
+    counts.forEach((c, i) => c && el("rect", {x: sx(bins[i]) + 1, y: sy(c), width: sx(0.24) - sx(0.2) - 2, height: bot - sy(c), rx: 3, style: "fill:var(--muted);opacity:.5"}, svg));
+    el("line", {x1: L, x2: 360 - R, y1: bot, y2: bot, style: "stroke:var(--rule)"}, svg);
+    [0.2, 0.4, 0.6, 0.8, 1].forEach(v => el("text", {x: sx(v), y: bot + 16, "text-anchor": "middle"}, svg).textContent = v.toFixed(1));
+    el("text", {x: (L + 360) / 2, y: bot + 34, "text-anchor": "middle"}, svg).textContent = "AUC";
+    el("line", {x1: sx(real), x2: sx(real), y1: top + 4, y2: bot, style: "stroke:var(--trainee);stroke-width:3;stroke-linecap:round"}, svg);
+    el("text", {x: sx(real) + (real > 0.8 ? -4 : 4), y: top + 16, "text-anchor": real > 0.8 ? "end" : "start", style: "fill:var(--trainee);font-weight:600"}, svg).textContent = t("real", {a: fmt(real, 2)});
+  });
+}
+
+function drawChecks() {
+  const names = t("groups");
+  const C = DATA.verify.checks, groups = [...new Set(C.map(c => c.group))].sort();
+  const pass = C.filter(c => c.result === "PASS").length;
+  $("checks").innerHTML =
+    `<thead><tr><th>${t("ch_check")}</th><th>${t("ch_result")}</th><th>${t("ch_what")}</th></tr></thead><tbody>` +
+    groups.map(g => `<tr class="grp"><td colspan="3">${names[g]}</td></tr>` + C.filter(c => c.group === g).map(c =>
+      `<tr><td>${c.check}</td><td><span class="${c.result === "PASS" ? "pass" : "fail"}">${c.result}</span></td><td>${c.detail}</td></tr>`).join("")).join("") +
+    `<tr class="grp"><td colspan="3">${t("ch_sum", {p: pass, n: C.length})}${C.some(c => c.result !== "PASS" && c.check.startsWith("pushup"))
+      ? t("ch_push") : ""}</td></tr></tbody>`;
+}
+
+function renderEvidence() { drawAuc(); drawConfusion(); drawOverall(); drawShap(); drawObs(); drawFolds(); drawPerm(); drawChecks(); }
+
+/* ---------- tabs ---------- */
+const TABS = ["session", "accuracy", "verify"];
+function showTab(name, push) {
+  if (!TABS.includes(name)) name = "session";
+  TABS.forEach(n => {
+    $("tab-" + n).hidden = n !== name;
+    $("tab-btn-" + n).setAttribute("aria-selected", String(n === name));
+  });
+  if (name !== "session") stop();
+  if (push) history.replaceState(null, "", name === "session" ? location.pathname + location.search : "#" + name);
+}
+document.querySelectorAll(".tabs [data-tab]").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab, true)));
+window.addEventListener("hashchange", () => showTab(location.hash.slice(1), false));
+$("tab-btn-session").parentElement.addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const cur = TABS.findIndex(n => $("tab-btn-" + n).getAttribute("aria-selected") === "true");
+  const next = TABS[(cur + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length];
+  showTab(next, true); $("tab-btn-" + next).focus();
+});
+
+/* ---------- theme toggle ---------- */
+const SUN = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>';
+const MOON = '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+const isDark = () => {
+  const forced = document.documentElement.dataset.theme;
+  return forced ? forced === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+};
+function paintThemeButton() {
+  const b = $("theme-toggle"), dark = isDark();
+  b.innerHTML = dark ? SUN : MOON;
+  b.setAttribute("aria-label", dark ? t("theme_to_light") : t("theme_to_dark"));
+  b.title = b.getAttribute("aria-label");
+}
+try { const th = localStorage.getItem("skilltwin-theme"); if (th === "dark" || th === "light") document.documentElement.dataset.theme = th; } catch (e) { /* storage unavailable */ }
+$("theme-toggle").addEventListener("click", () => {
+  const next = isDark() ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("skilltwin-theme", next); } catch (e) { /* storage unavailable */ }
+  paintThemeButton();
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintThemeButton);
+
+/* ---------- language toggle: interface text, and the coaching language follows ---------- */
+function applyStatic() {
+  document.documentElement.lang = uiLang;
+  document.querySelectorAll("[data-i18n]").forEach(n => { n.textContent = t(n.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach(n => { n.innerHTML = t(n.dataset.i18nHtml); });
+  const b = $("lang-toggle");
+  b.innerHTML = J() ? "EN" : '<span class="jp">日本語</span>';
+  b.setAttribute("aria-label", t("lang_to"));
+  b.title = t("lang_to");
+  b.setAttribute("aria-pressed", String(J()));
+}
+function setUiLang(l) {
+  const nm = $("name").value.trim(), wasDefault = nm === "" || Object.values(UI).some(u => u.default_name === nm);
+  uiLang = l;
+  try { localStorage.setItem("skilltwin-ui-lang", l); } catch (e) { /* storage unavailable */ }
+  if (wasDefault) $("name").value = UI[l].default_name;
+  $("lang").value = l;
+  applyStatic();
+  paintThemeButton();
+  stats();
+  const who = whoSel.value, curve = curveSel.value;
+  buildCards();
+  fillPeople(who);
+  fillCurves(curve);
+  renderTraineeCard();
+  if (!raf) playBtn.textContent = t("play");
+  renderEvidence();
+  if (step > 0) go(step); else renderStepper();
+}
+$("lang-toggle").addEventListener("click", () => setUiLang(J() ? "en" : "ja"));
+
+/* ---------- start ---------- */
+if (J()) setUiLang("ja");
+else { applyStatic(); stats(); renderEvidence(); renderStepper(); renderTraineeCard(); }
+paintThemeButton();
+stop();
+showTab(location.hash.slice(1), false);
+</script>
